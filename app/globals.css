@@ -29,3 +29,49 @@ body {
   --color-gold: oklch(76.93% 0.1058 94.07);
   --color-orange: oklch(61.61% 0.1156 43.33);
 }
+
+@layer utilities {
+  .text-preset-1 {
+    @apply text-[32px] leading-[1.2] tracking-normal font-bold;
+  }
+
+  .text-preset-2 {
+    @apply text-[20px] leading-[1.2] tracking-normal font-bold;
+  }
+
+  .text-preset-3 {
+    @apply text-[16px] leading-[1.5] tracking-normal font-bold;
+  }
+
+  .text-preset-4 {
+    @apply text-[14px] leading-[1.5] tracking-normal;
+  }
+
+  .text-preset-4-bold {
+    @apply text-[14px] leading-[1.5] tracking-normal font-bold;
+  }
+
+  .text-preset-5 {
+    @apply text-[12px] leading-[1.5] tracking-normal;
+  }
+
+  .text-preset-5-bold {
+    @apply text-[12px] leading-[1.5] tracking-normal font-bold;
+  }
+
+  .flex-col {
+    @apply flex flex-col;
+  }
+
+  .flex-row {
+    @apply flex flex-row;
+  }
+
+  .flex-col-center {
+    @apply flex flex-col items-center justify-center;
+  }
+
+  .flex-row-center {
+    @apply flex flex-row items-center justify-center;
+  }
+}
