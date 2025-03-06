@@ -1,11 +1,18 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import Button from '@/components/Button';
 import logo from '../../public/assets/images/logo-large.svg';
 import authentication_illustration from '../../public/assets/images/illustration-authentication.svg';
+import show_password_icon from '../../public/assets/images/icon-show-password.svg';
+import hide_password_icon from '../../public/assets/images/icon-hide-password.svg';
 
 const Signup = () => {
+  const [inputType, setInputType] = useState('password');
+
   return (
     <>
       <div className='bg-gray-900 flex items-center justify-center px-10 py-6 rounded-b-lg xl:hidden'>
@@ -39,8 +46,18 @@ const Signup = () => {
               <input className='border border-beige-500 rounded-lg px-5 py-3' />
               <label className='text-preset-5-bold text-gray-500'>Email</label>
               <input className='border border-beige-500 rounded-lg px-5 py-3' />
-              <label className='text-preset-5-bold text-gray-500'>Create Password</label>
-              <input className='border border-beige-500 rounded-lg px-5 py-3' />
+              <div className='flex flex-col gap-4 relative'>
+                <label className='text-preset-5-bold text-gray-500'>Create Password</label>
+                <input
+                  type={inputType}
+                  className='border border-beige-500 rounded-lg px-5 py-3'></input>
+                <Image
+                  src={inputType === 'password' ? show_password_icon : hide_password_icon}
+                  alt='show-password'
+                  onClick={() => setInputType(inputType === 'password' ? 'text' : 'password')}
+                  className='absolute bottom-5 right-5 hover:cursor-pointer'
+                />
+              </div>
             </div>
             <Button type='submit'>Create Account</Button>
             <span className='flex-row-center gap-2'>
