@@ -11,7 +11,63 @@ import show_password_icon from '../../public/assets/images/icon-show-password.sv
 import hide_password_icon from '../../public/assets/images/icon-hide-password.svg';
 
 const Signup = () => {
-  const [inputType, setInputType] = useState('password');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+
+  const validateInputs = (name: string, value: string) => {
+    let error = '';
+
+    if (name === 'username' && value.length < 3) {
+      error = 'Name must be at least 3 characters';
+    }
+
+    if (name === 'email' && !/^\S+@\S+\.\S+$/.test(value)) {
+      error = 'Enter a valid email address';
+    }
+
+    if (name === 'password' && value.length < 8) {
+      error = 'Password must be at least 8 characters';
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  };
+
+  const handleChange = (e: { target: { name: string; value: string } }) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    validateInputs(name, value);
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    Object.keys(formData).forEach((key) =>
+      validateInputs(key, formData[key as keyof typeof formData])
+    );
+
+    if (!errors.username && !errors.email && !errors.password) {
+      alert('Account successfully created!');
+    }
+  };
 
   return (
     <>
@@ -39,24 +95,65 @@ const Signup = () => {
           </div>
         </div>
         <div className='w-full px-4 py-6 md:px-26 md:py-8 xl:px-30 3xl:px-60'>
-          <form className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
+          <form
+            onSubmit={handleSubmit}
+            className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
             <h1 className='text-gray-900 text-preset-1'>Sign Up</h1>
             <div className='flex flex-col gap-4'>
-              <label className='text-preset-5-bold text-gray-500'>Name</label>
-              <input className='border border-beige-500 rounded-lg px-5 py-3' />
-              <label className='text-preset-5-bold text-gray-500'>Email</label>
-              <input className='border border-beige-500 rounded-lg px-5 py-3' />
+              <div className='flex flex-col gap-4 relative'>
+                <label className='text-preset-5-bold text-gray-500'>Name</label>
+                <input
+                  name='username'
+                  value={formData.username}
+                  onChange={handleChange}
+                  className={`border border-beige-500 rounded-lg px-5 py-3 ${
+                    errors.username ? 'border-red' : ''
+                  }`}
+                />
+                {errors.username && (
+                  <p className={`text-preset-5 text-gray-500 absolute -bottom-6 right-0`}>
+                    {errors.username}
+                  </p>
+                )}
+              </div>
+              <div className='flex flex-col gap-4 relative'>
+                <label className='text-preset-5-bold text-gray-500'>Email</label>
+                <input
+                  name='email'
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`border border-beige-500 rounded-lg px-5 py-3 ${
+                    errors.email ? 'border-red' : ''
+                  }`}
+                />
+                {errors.email && (
+                  <p className={`text-preset-5 text-gray-500 absolute -bottom-6 right-0`}>
+                    {errors.email}
+                  </p>
+                )}
+              </div>
               <div className='flex flex-col gap-4 relative'>
                 <label className='text-preset-5-bold text-gray-500'>Create Password</label>
                 <input
-                  type={inputType}
-                  className='border border-beige-500 rounded-lg px-5 py-3'></input>
+                  name='password'
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`border border-beige-500 rounded-lg px-5 py-3 ${
+                    errors.password ? 'border-red' : ''
+                  }`}
+                />
                 <Image
-                  src={inputType === 'password' ? show_password_icon : hide_password_icon}
-                  alt='show-password'
-                  onClick={() => setInputType(inputType === 'password' ? 'text' : 'password')}
+                  src={showPassword ? hide_password_icon : show_password_icon}
+                  alt={showPassword ? 'hide-password' : 'show-password'}
+                  onClick={() => setShowPassword(!showPassword)}
                   className='absolute bottom-5 right-5 hover:cursor-pointer'
                 />
+                {errors.password && (
+                  <p className='text-preset-5 text-gray-500 text-right absolute -bottom-6 right-0'>
+                    {errors.password}
+                  </p>
+                )}
               </div>
             </div>
             <Button type='submit'>Create Account</Button>
