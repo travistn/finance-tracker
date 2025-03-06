@@ -5,7 +5,7 @@ import Button from '@/components/Button';
 import logo from '../../public/assets/images/logo-large.svg';
 import authentication_illustration from '../../public/assets/images/illustration-authentication.svg';
 
-const Login = () => {
+const Signup = () => {
   return (
     <>
       <div className='bg-gray-900 flex items-center justify-center px-10 py-6 rounded-b-lg xl:hidden'>
@@ -33,20 +33,22 @@ const Login = () => {
         </div>
         <div className='w-full px-4 py-6 md:px-26 md:py-8 xl:px-30 3xl:px-60'>
           <form className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
-            <h1 className='text-gray-900 text-preset-1'>Login</h1>
+            <h1 className='text-gray-900 text-preset-1'>Sign Up</h1>
             <div className='flex flex-col gap-4'>
+              <label className='text-preset-5-bold text-gray-500'>Name</label>
+              <input className='border border-beige-500 rounded-lg px-5 py-3' />
               <label className='text-preset-5-bold text-gray-500'>Email</label>
               <input className='border border-beige-500 rounded-lg px-5 py-3' />
-              <label className='text-preset-5-bold text-gray-500'>Password</label>
+              <label className='text-preset-5-bold text-gray-500'>Create Password</label>
               <input className='border border-beige-500 rounded-lg px-5 py-3' />
             </div>
-            <Button type='submit'>Login</Button>
+            <Button type='submit'>Create Account</Button>
             <span className='flex-row-center gap-2'>
-              <p className='text-preset-4 text-gray-500'>Need to create an account?</p>
+              <p className='text-preset-4 text-gray-500'>Already have an account?</p>
               <Link
-                href='/signup'
+                href='/login'
                 className='text-preset-4-bold text-gray-900 underline underline-offset-4 cursor-pointer'>
-                Sign Up
+                Login
               </Link>
             </span>
           </form>
@@ -56,4 +58,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
