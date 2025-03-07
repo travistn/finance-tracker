@@ -57,7 +57,7 @@ const Signup = () => {
     validateInputs(name, value);
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     Object.keys(formData).forEach((key) =>
@@ -66,6 +66,17 @@ const Signup = () => {
 
     if (!errors.username && !errors.email && !errors.password) {
       alert('Account successfully created!');
+
+      try {
+        await fetch('/api/user', {
+          method: 'POST',
+          body: JSON.stringify({
+            formData,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to create user', error);
+      }
     }
   };
 
