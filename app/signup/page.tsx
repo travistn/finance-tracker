@@ -14,8 +14,6 @@ import hide_password_icon from '../../public/assets/images/icon-hide-password.sv
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [error, setError] = '';
-
   const [formData, setFormData] = useState({
     username: '',
     email: '',
