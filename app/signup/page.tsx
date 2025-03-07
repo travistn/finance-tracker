@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button';
 import logo from '../../public/assets/images/logo-large.svg';
@@ -24,6 +25,8 @@ const Signup = () => {
     email: '',
     password: '',
   });
+
+  const router = useRouter();
 
   const validateInputs = (name: string, value: string) => {
     let error = '';
@@ -68,12 +71,16 @@ const Signup = () => {
       alert('Account successfully created!');
 
       try {
-        await fetch('/api/user', {
+        const response = await fetch('/api/user', {
           method: 'POST',
           body: JSON.stringify({
             formData,
           }),
         });
+
+        if (response.ok) {
+          router.push('/login');
+        }
       } catch (error) {
         console.error('Failed to create user', error);
       }
