@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server';
+
 import connectToDatabase from '@/lib/mongoose';
 import User from '@/models/User';
 
@@ -9,12 +11,20 @@ export const POST = async (req: Request) => {
 
     const { username, email, password } = body.formData;
 
-    const user = new User({ username, email, password });
+    const existingUser = await User.findOne({ email });
 
-    await user.save();
-    return new Response(JSON.stringify(user), { status: 201 });
+    if (existingUser) {
+      return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
+    }
+
+    const newUser = new User({ username, email, password });
+
+    if (newUser) {
+      await newUser.save();
+      return NextResponse.json(newUser, { status: 201 });
+    }
   } catch (error) {
     console.error(error);
-    return new Response('Failed to create user', { status: 400 });
+    return NextResponse.json({ error: 'Failed to create user' }, { status: 400 });
   }
 };

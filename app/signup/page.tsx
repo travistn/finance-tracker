@@ -14,6 +14,8 @@ import hide_password_icon from '../../public/assets/images/icon-hide-password.sv
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const [error, setError] = '';
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -68,8 +70,6 @@ const Signup = () => {
     );
 
     if (!errors.username && !errors.email && !errors.password) {
-      alert('Account successfully created!');
-
       try {
         const response = await fetch('/api/user', {
           method: 'POST',
@@ -78,8 +78,19 @@ const Signup = () => {
           }),
         });
 
+        const data = await response.json();
+
         if (response.ok) {
+          alert('Account successfully created!');
+
           router.push('/login');
+        } else if (data.error) {
+          alert('Email already in use. Please use another email.');
+
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            email: data.error,
+          }));
         }
       } catch (error) {
         console.error('Failed to create user', error);
