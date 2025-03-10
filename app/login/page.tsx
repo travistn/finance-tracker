@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button';
 import logo from '../../public/assets/images/logo-large.svg';
@@ -11,7 +13,43 @@ import show_password_icon from '../../public/assets/images/icon-show-password.sv
 import hide_password_icon from '../../public/assets/images/icon-hide-password.svg';
 
 const Login = () => {
-  const [inputType, setInputType] = useState('password');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const router = useRouter();
+
+  const handleChange = (e: { target: { name: string; value: string } }) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (!result?.error) {
+        router.push('/dashboard');
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Failed to log in', error);
+    }
+  };
 
   return (
     <>
@@ -39,20 +77,30 @@ const Login = () => {
           </div>
         </div>
         <div className='w-full px-4 py-6 md:px-26 md:py-8 xl:px-30 3xl:px-60'>
-          <form className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
+          <form
+            onSubmit={handleSubmit}
+            className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
             <h1 className='text-gray-900 text-preset-1'>Login</h1>
             <div className='flex flex-col gap-4'>
               <label className='text-preset-5-bold text-gray-500'>Email</label>
-              <input className='border border-beige-500 rounded-lg px-5 py-3' />
+              <input
+                name='email'
+                value={formData.email}
+                onChange={handleChange}
+                className='border border-beige-500 rounded-lg px-5 py-3'
+              />
               <div className='flex flex-col gap-4 relative'>
                 <label className='text-preset-5-bold text-gray-500'>Password</label>
                 <input
-                  type={inputType}
+                  name='password'
+                  value={formData.password}
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={handleChange}
                   className='border border-beige-500 rounded-lg px-5 py-3'></input>
                 <Image
-                  src={inputType === 'password' ? show_password_icon : hide_password_icon}
-                  alt='show-password'
-                  onClick={() => setInputType(inputType === 'password' ? 'text' : 'password')}
+                  src={showPassword ? hide_password_icon : show_password_icon}
+                  alt={showPassword ? 'hide-password' : 'show-password'}
+                  onClick={() => setShowPassword(!showPassword)}
                   className='absolute bottom-5 right-5 hover:cursor-pointer'
                 />
               </div>
