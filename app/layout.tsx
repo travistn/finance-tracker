@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
+
 import './globals.css';
+import Provider from '@/components/Provider';
 
 const publicSans = Public_Sans({
   subsets: ['latin'],
@@ -17,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body className={`${publicSans.className} antialiased bg-beige-100`}>{children}</body>
-    </html>
+    <Provider>
+      <html lang='en'>
+        <body className={`${publicSans.className} antialiased bg-beige-100`}>{children}</body>
+      </html>
+    </Provider>
   );
 }
