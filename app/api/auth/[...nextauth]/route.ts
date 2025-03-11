@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
+import { randomUUID } from 'crypto';
 
 import connectToDatabase from '@/lib/mongoose';
 import User from '@/models/User';
@@ -21,15 +22,28 @@ const handler = NextAuth({
         },
       },
       async authorize(credentials) {
-        if (!credentials?.email && !credentials?.password) {
+        await connectToDatabase();
+
+        if (credentials?.email === 'guest') {
+          const guestId = randomUUID();
+
+          await User.create({
+            email: `guest_${guestId}`,
+            username: 'Guest User',
+            expireAt: new Date(Date.now() + 30 * 60 * 1000),
+          });
+          return {
+            id: guestId,
+            email: `guest_${guestId}`,
+            name: 'Guest User',
+          };
+        } else if (!credentials?.email && !credentials?.password) {
           throw new Error('Missing email and password');
         } else if (!credentials?.email) {
           throw new Error('Missing email');
         } else if (!credentials?.password) {
           throw new Error('Missing password');
         }
-
-        await connectToDatabase();
 
         const user = await User.findOne({ email: credentials?.email });
 

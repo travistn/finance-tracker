@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    expireAt: {
+      type: Date,
+      expires: 0,
+    },
   },
   { timestamps: true }
 );

@@ -31,7 +31,7 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -48,6 +48,22 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Failed to log in', error);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: 'guest',
+        password: '',
+      });
+
+      if (!result?.error) {
+        router.push('/dashboard');
+      }
+    } catch (error) {
+      console.log('Failed to log in', error);
     }
   };
 
@@ -78,7 +94,7 @@ const Login = () => {
         </div>
         <div className='w-full px-4 py-6 md:px-26 md:py-8 xl:px-30 3xl:px-60'>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleLogin}
             className='px-5 py-6 md:p-8 flex flex-col gap-8 bg-white rounded-xl'>
             <h1 className='text-gray-900 text-preset-1'>Login</h1>
             <div className='flex flex-col gap-4'>
@@ -106,14 +122,24 @@ const Login = () => {
               </div>
             </div>
             <Button type='submit'>Login</Button>
-            <span className='flex-row-center gap-2'>
-              <p className='text-preset-4 text-gray-500'>Need to create an account?</p>
-              <Link
-                href='/signup'
-                className='text-preset-4-bold text-gray-900 underline underline-offset-4 cursor-pointer'>
-                Sign Up
-              </Link>
-            </span>
+            <div className='flex flex-col gap-4'>
+              <span className='flex-row-center gap-2'>
+                <p className='text-preset-4 text-gray-500'>Need to create an account?</p>
+                <Link
+                  href='/signup'
+                  className='text-preset-4-bold text-gray-900 underline underline-offset-4 cursor-pointer'>
+                  Sign Up
+                </Link>
+              </span>
+              <span className='flex-row-center gap-2'>
+                <p className='text-preset-4 text-gray-500'>Or try out the app with a </p>
+                <p
+                  onClick={handleGuestLogin}
+                  className='text-preset-4-bold text-gray-900 underline underline-offset-4 cursor-pointer'>
+                  Guest Account
+                </p>
+              </span>
+            </div>
           </form>
         </div>
       </div>
