@@ -73,7 +73,7 @@ const Login = () => {
     if (session) {
       router.push('/dashboard');
     }
-  }, []);
+  }, [session, router]);
 
   return (
     <>
