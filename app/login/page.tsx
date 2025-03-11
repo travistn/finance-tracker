@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 import Button from '@/components/Button';
@@ -11,8 +11,10 @@ import logo from '../../public/assets/images/logo-large.svg';
 import authentication_illustration from '../../public/assets/images/illustration-authentication.svg';
 import show_password_icon from '../../public/assets/images/icon-show-password.svg';
 import hide_password_icon from '../../public/assets/images/icon-hide-password.svg';
+import google_icon from '../../public/assets/images/google-icon.svg';
 
 const Login = () => {
+  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -66,6 +68,12 @@ const Login = () => {
       console.log('Failed to log in', error);
     }
   };
+
+  useEffect(() => {
+    if (session) {
+      router.push('/dashboard');
+    }
+  }, []);
 
   return (
     <>
@@ -122,6 +130,14 @@ const Login = () => {
               </div>
             </div>
             <Button type='submit'>Login</Button>
+            <Button
+              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+              variant='secondary'>
+              <div className='flex-row-center gap-1'>
+                Login with Google
+                <Image src={google_icon} alt='google-icon' className='w-[17px]' />
+              </div>
+            </Button>
             <div className='flex flex-col gap-4'>
               <span className='flex-row-center gap-2'>
                 <p className='text-preset-4 text-gray-500'>Need to create an account?</p>

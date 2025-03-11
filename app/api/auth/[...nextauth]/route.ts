@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { compare } from 'bcryptjs';
 import { randomUUID } from 'crypto';
 
@@ -9,6 +10,10 @@ import User from '@/models/User';
 const handler = NextAuth({
   session: { strategy: 'jwt' },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -60,6 +65,29 @@ const handler = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async signIn({ profile }) {
+      try {
+        await connectToDatabase();
+
+        if (profile) {
+          const existingUser = await User.findOne({ email: profile.email });
+
+          if (!existingUser) {
+            await User.create({
+              email: profile.email,
+              username: profile.name,
+            });
+          }
+        }
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
 });
 
