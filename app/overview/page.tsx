@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 
 import Sidebar from '@/components/Sidebar';
 
-const Dashboard = () => {
+const Overview = () => {
   const { data: session } = useSession();
 
   return (
@@ -16,4 +16,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Overview;
