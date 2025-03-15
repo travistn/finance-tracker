@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { motion } from 'motion/react';
 
 import Icons from '../constants/Icons';
 
@@ -20,7 +21,10 @@ const Sidebar = () => {
   const [minimizeMenu, setMinimizeMenu] = useState(false);
 
   return (
-    <div className='bg-gray-900 flex flex-col pt-2 max-xl:rounded-t-lg max-xl:px-10 xl:rounded-r-2xl xl:gap-6 xl:pb-6 xl:items-start'>
+    <motion.div
+      animate={{ width: minimizeMenu ? 80 : '' }}
+      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+      className='bg-gray-900 flex flex-col pt-2 max-xl:rounded-t-lg max-xl:px-10 xl:rounded-r-2xl xl:gap-6 xl:pb-6 xl:items-start'>
       <img
         src={`/assets/images/logo-${!minimizeMenu ? 'large' : 'small'}.svg`}
         alt='logo'
@@ -49,7 +53,7 @@ const Sidebar = () => {
                 {Icons[item.name as keyof typeof Icons]}
               </div>
               <p
-                className={`text-preset-5-bold text-gray-300 capitalize max-md:hidden ${
+                className={`text-preset-5-bold text-gray-300 capitalize truncate max-md:hidden ${
                   pathname === item.path ? 'text-gray-900' : 'group-hover/sidebar:xl:text-gray-900'
                 } ${minimizeMenu ? 'xl:hidden' : ''}`}>
                 {item.name.split('-').join(' ')}
@@ -68,7 +72,7 @@ const Sidebar = () => {
         />
         <p className='text-preset-3 text-gray-300'>{minimizeMenu ? '' : 'Minimize Menu'}</p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
