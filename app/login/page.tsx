@@ -44,7 +44,7 @@ const Login = () => {
       });
 
       if (!result?.error) {
-        router.push('/dashboard');
+        router.push('/overview');
       } else {
         alert(result.error);
       }
@@ -62,7 +62,7 @@ const Login = () => {
       });
 
       if (!result?.error) {
-        router.push('/dashboard');
+        router.push('/overview');
       }
     } catch (error) {
       console.log('Failed to log in', error);
@@ -71,7 +71,7 @@ const Login = () => {
 
   useEffect(() => {
     if (session) {
-      router.push('/dashboard');
+      router.push('/overview');
     }
   }, [session, router]);
 
@@ -131,7 +131,7 @@ const Login = () => {
             </div>
             <Button type='submit'>Login</Button>
             <Button
-              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+              onClick={() => signIn('google', { callbackUrl: '/overview' })}
               variant='secondary'>
               <div className='flex-row-center gap-1'>
                 Login with Google
