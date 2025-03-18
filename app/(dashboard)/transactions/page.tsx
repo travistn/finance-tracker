@@ -8,9 +8,22 @@ import { transactions, dropdownSortLabels, dropdownCategories } from '../../../c
 
 const Transactions = () => {
   const [sortLabel, setSortLabel] = useState('Latest');
-  const [category, setCategory] = useState('All transactions');
+  const [category, setCategory] = useState('All Transactions');
 
   const [search, setSearch] = useState('');
+
+  const getFilteredTransactions = () => {
+    return transactions
+      .slice(0, 10)
+      .filter((item) => item?.name.toLowerCase().includes(search))
+      .filter(
+        (transaction) =>
+          category === 'All Transactions' ||
+          transaction.category.toLowerCase() === category.toLowerCase()
+      );
+  };
+
+  const filteredTransactions = getFilteredTransactions();
 
   return (
     <div className='flex flex-col gap-8'>
@@ -57,12 +70,9 @@ const Transactions = () => {
           <h2 className='text-preset-5 text-gray-500 text-right'>Amount</h2>
         </div>
         <div>
-          {transactions
-            .slice(0, 6)
-            .filter((item) => item?.name.toLowerCase().includes(search))
-            .map((transaction, index) => (
-              <Transaction transaction={transaction} key={index} />
-            ))}
+          {filteredTransactions.map((transaction, index) => (
+            <Transaction transaction={transaction} key={index} />
+          ))}
         </div>
       </div>
     </div>
