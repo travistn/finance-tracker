@@ -10,6 +10,8 @@ const Transactions = () => {
   const [sortLabel, setSortLabel] = useState('Latest');
   const [category, setCategory] = useState('All transactions');
 
+  const [search, setSearch] = useState('');
+
   return (
     <div className='flex flex-col gap-8'>
       <h1 className='text-preset-1 text-gray-900'>Transactions</h1>
@@ -18,6 +20,8 @@ const Transactions = () => {
           <div className='w-full flex items-center justify-between'>
             <input
               placeholder='Search transaction'
+              value={search}
+              onChange={(e) => setSearch(e.target.value.toLowerCase())}
               className='rounded-[8px] border border-beige-500 py-3 px-5 text-gray-900 truncate md:w-[170px] lg:min-w-[280px] 2xl:min-w-[400px]'
             />
             <div className='flex flex-row gap-6 md:hidden'>
@@ -53,9 +57,12 @@ const Transactions = () => {
           <h2 className='text-preset-5 text-gray-500 text-right'>Amount</h2>
         </div>
         <div>
-          {transactions.slice(0, 6).map((transaction, index) => (
-            <Transaction transaction={transaction} key={index} />
-          ))}
+          {transactions
+            .slice(0, 6)
+            .filter((item) => item?.name.toLowerCase().includes(search))
+            .map((transaction, index) => (
+              <Transaction transaction={transaction} key={index} />
+            ))}
         </div>
       </div>
     </div>
