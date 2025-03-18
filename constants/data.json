@@ -451,5 +451,19 @@
       "total": 531.0,
       "theme": "#826CB0"
     }
+  ],
+  "dropdownSortLabels": ["Latest", "Oldest", "A to Z", "Z to A", "Highest", "Lowest"],
+  "dropdownCategories": [
+    "All Transactions",
+    "Bills",
+    "Dining Out",
+    "Education",
+    "Entertainment",
+    "General",
+    "Groceries",
+    "Lifestyle",
+    "Personal Care",
+    "Shopping",
+    "Transportation"
   ]
 }
