@@ -26,7 +26,7 @@ const Sidebar = () => {
     <motion.div
       animate={{ width: minimizeMenu ? 80 : '' }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-      className='bg-gray-900 flex flex-col pt-2 max-xl:rounded-t-lg max-xl:px-10 xl:rounded-r-2xl xl:gap-6 xl:pb-6 xl:items-start'>
+      className='bg-gray-900 flex flex-col pt-2 max-xl:rounded-t-[8px] max-xl:px-10 xl:rounded-r-2xl xl:gap-6 xl:pb-6 xl:items-start'>
       <img
         src={`/assets/images/logo-${!minimizeMenu ? 'large' : 'small'}.svg`}
         alt='logo'
@@ -41,10 +41,10 @@ const Sidebar = () => {
           <div key={item.name} className='group/sidebar w-full'>
             <Link
               href={item.path}
-              className={`flex flex-col items-center gap-2 pt-2 pb-3 flex-1 max-xl:rounded-t-lg max-xl:border-b-4 xl:flex-row xl:gap-4 xl:pl-6 xl:py-4 xl:rounded-r-xl xl:border-l-4 transition ease-in-out duration-300 ${
+              className={`flex flex-col items-center gap-2 pt-2 pb-3 flex-1 max-xl:rounded-t-[8px] max-xl:border-b-4 xl:flex-row xl:gap-4 xl:pl-6 xl:py-4 xl:rounded-r-xl xl:border-l-4 transition ease-in-out duration-300 ${
                 pathname === item.path
                   ? 'bg-beige-100 border-green'
-                  : 'group-hover/sidebar:xl:bg-beige-100 group-hover/sidebar:xl:border-green'
+                  : 'group-hover/sidebar:xl:bg-beige-100 group-hover/sidebar:xl:border-green border-gray-900'
               } ${minimizeMenu ? 'xl:pr-6' : 'xl:pr-20'}`}>
               <div
                 role='img'
