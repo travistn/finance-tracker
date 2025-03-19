@@ -4,6 +4,14 @@ import { useState } from 'react';
 
 import Transaction from '@/components/Transaction';
 import Dropdown from '@/components/Dropdown';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { transactions, dropdownSortLabels, dropdownCategories } from '../../../constants/data.json';
 
 const Transactions = () => {
@@ -11,10 +19,12 @@ const Transactions = () => {
   const [category, setCategory] = useState('All Transactions');
 
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const transactionsPerPage = 10;
 
   const getFilteredTransactions = () => {
     return transactions
-      .slice(0, 10)
       .filter((item) => item?.name.toLowerCase().includes(search))
       .filter(
         (transaction) =>
@@ -45,6 +55,14 @@ const Transactions = () => {
   };
 
   const filteredTransactions = getFilteredTransactions();
+
+  const startIndex = (currentPage - 1) * transactionsPerPage;
+  const endIndex = startIndex + transactionsPerPage;
+
+  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+  const pageNumbers = [...Array(totalPages).keys()].map((n) => n + 1);
+
+  const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
 
   return (
     <div className='flex flex-col gap-8'>
@@ -91,10 +109,40 @@ const Transactions = () => {
           <h2 className='text-preset-5 text-gray-500 text-right'>Amount</h2>
         </div>
         <div>
-          {filteredTransactions.map((transaction, index) => (
+          {currentTransactions.map((transaction, index) => (
             <Transaction transaction={transaction} key={index} />
           ))}
         </div>
+        <Pagination>
+          <PaginationContent className='flex flex-row max-lg:justify-between select-none max-lg:w-full lg:gap-4'>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className='border border-beige-500 rounded-[8px] text-preset-4 text-gray-900 hover:bg-beige-500 hover:text-white hover:cursor-pointer'
+              />
+            </PaginationItem>
+            <PaginationItem className='flex gap-2'>
+              {pageNumbers.map((page) => (
+                <PaginationLink
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`rounded-[8px] text-preset-4 hover:bg-beige-500 hover:text-white hover:cursor-pointer ${
+                    page === currentPage
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-900 border border-beige-500'
+                  }`}>
+                  {page}
+                </PaginationLink>
+              ))}
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                className='border border-beige-500 rounded-[8px] text-preset-4 text-gray-900 hover:bg-beige-500 hover:text-white hover:cursor-pointer'
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
