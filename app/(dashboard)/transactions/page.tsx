@@ -20,7 +20,28 @@ const Transactions = () => {
         (transaction) =>
           category === 'All Transactions' ||
           transaction.category.toLowerCase() === category.toLowerCase()
-      );
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+
+        switch (sortLabel) {
+          case 'Latest':
+            return dateB - dateA;
+          case 'Oldest':
+            return dateA - dateB;
+          case 'A to Z':
+            return a.name.localeCompare(b.name);
+          case 'Z to A':
+            return b.name.localeCompare(a.name);
+          case 'Highest':
+            return b.amount - a.amount;
+          case 'Lowest':
+            return a.amount - b.amount;
+          default:
+            return 0;
+        }
+      });
   };
 
   const filteredTransactions = getFilteredTransactions();
