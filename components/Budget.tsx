@@ -1,4 +1,5 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
+import { motion } from 'motion/react';
 
 import { BudgetType } from '@/types';
 import { transactions } from '../constants/data.json';
@@ -15,6 +16,8 @@ interface ThemeVariants {
 }
 
 const Budget = ({ budget }: BudgetProps) => {
+  const [seeAll, setSeeAll] = useState(false);
+
   const budgetSpent = 25;
   const budgetRemaining = budget.maximum - budgetSpent;
   const percentageSpent = (budgetSpent / budget.maximum) * 100;
@@ -86,51 +89,61 @@ const Budget = ({ budget }: BudgetProps) => {
           </div>
         </div>
       </div>
-      <div className='bg-beige-100 p-4 flex flex-col gap-5 rounded-[12px] w-full'>
+      <motion.div
+        layout
+        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        className='bg-beige-100 p-4 flex flex-col gap-5 rounded-[12px] w-full'>
         <div className='flex items-center justify-between'>
           <h3 className='text-preset-3 text-gray-900'>Latest Spending</h3>
-          <span className='flex items-center gap-3 text-preset-4 text-gray-500'>
+          <span
+            onClick={() => setSeeAll(!seeAll)}
+            className='flex items-center gap-3 text-preset-4 text-gray-500 select-none hover:cursor-pointer'>
             See All
-            <img src={'/assets/images/icon-caret-right.svg'} />
+            <img
+              src={'/assets/images/icon-caret-right.svg'}
+              className={`${seeAll ? 'rotate-90' : ''}`}
+            />
           </span>
         </div>
         <div className='flex flex-col'>
-          {filteredTransactions.map((transaction, index) => (
-            <Fragment key={index}>
-              <div key={index} className='flex justify-between items-center'>
-                <div className='flex items-center gap-4'>
-                  <img
-                    src={transaction.avatar}
-                    alt='avatar'
-                    className='max-md:hidden w-[32px] h-[32px] rounded-full'
-                  />
-                  <p className='text-preset-5-bold text-gray-900'>{transaction.name}</p>
+          {(seeAll ? filteredTransactions : filteredTransactions.slice(0, 3)).map(
+            (transaction, index) => (
+              <Fragment key={index}>
+                <div key={index} className='flex justify-between items-center'>
+                  <div className='flex items-center gap-4'>
+                    <img
+                      src={transaction.avatar}
+                      alt='avatar'
+                      className='max-md:hidden w-[32px] h-[32px] rounded-full'
+                    />
+                    <p className='text-preset-5-bold text-gray-900'>{transaction.name}</p>
+                  </div>
+                  <div className='flex flex-col gap-1 text-right'>
+                    <p className='text-preset-5-bold text-gray-900'>
+                      {transaction.amount.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                    </p>
+                    <p className='text-preset-5 text-gray-500'>
+                      {new Date(transaction.date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div className='flex flex-col gap-1 text-right'>
-                  <p className='text-preset-5-bold text-gray-900'>
-                    {transaction.amount.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    })}
-                  </p>
-                  <p className='text-preset-5 text-gray-500'>
-                    {new Date(transaction.date).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-              </div>
-              <div
-                className={`border-b-1 border-gray-500 my-4 opacity-15 ${
-                  index === filteredTransactions.length - 1 ? 'hidden' : ''
-                }`}
-              />
-            </Fragment>
-          ))}
+                <div
+                  className={`border-b-1 border-gray-500 my-4 opacity-15 ${
+                    index === filteredTransactions.length - 1 ? 'hidden' : ''
+                  }`}
+                />
+              </Fragment>
+            )
+          )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import Button from '@/components/Button';
 import Budget from '@/components/Budget';
 import { budgets } from '../../../constants/data.json';
