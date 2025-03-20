@@ -12,9 +12,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { transactions, dropdownSortLabels, dropdownCategories } from '../../../constants/data.json';
+import { dropdownSortLabels, dropdownCategories } from '../../../constants/data.json';
+import { useTransactionStore } from '@/store/useTransactionStore';
 
 const Transactions = () => {
+  const { transactions } = useTransactionStore();
+
   const [sortLabel, setSortLabel] = useState('Latest');
   const [category, setCategory] = useState('All Transactions');
 

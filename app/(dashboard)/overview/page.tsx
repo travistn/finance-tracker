@@ -1,9 +1,27 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+
+import { useTransactionStore } from '@/store/useTransactionStore';
 
 const Overview = () => {
-  const { data: session } = useSession();
+  const { setTransactions } = useTransactionStore();
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch('/api/transaction', {
+          method: 'GET',
+        });
+
+        const data = await response.json();
+        setTransactions(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchTransactions();
+  }, [setTransactions]);
 
   return (
     <div>
