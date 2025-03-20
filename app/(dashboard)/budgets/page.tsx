@@ -9,7 +9,9 @@ const Budgets = () => {
         <h1 className='text-preset-1 text-gray-900'>Budgets</h1>
         <Button>+ Add New Budget</Button>
       </div>
-      <Budget budget={budgets[0]} />
+      {budgets.map((budget, index) => (
+        <Budget budget={budget} key={index} />
+      ))}
     </div>
   );
 };
