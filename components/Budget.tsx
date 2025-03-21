@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { motion } from 'motion/react';
 
 import { BudgetType } from '@/types';
-import { transactions } from '../constants/data.json';
+import { useTransactionStore } from '@/store/useTransactionStore';
 
 interface BudgetProps {
   budget: BudgetType;
@@ -17,8 +17,15 @@ interface ThemeVariants {
 
 const Budget = ({ budget }: BudgetProps) => {
   const [seeAll, setSeeAll] = useState(false);
+  const { transactions } = useTransactionStore();
 
-  const budgetSpent = 25;
+  const filteredTransactions = transactions.filter(
+    (transaction) => transaction.category === budget.category
+  );
+
+  const budgetSpent = Math.abs(
+    filteredTransactions.reduce((acc, transaction) => acc + transaction.amount, 0)
+  );
   const budgetRemaining = budget.maximum - budgetSpent;
   const percentageSpent = (budgetSpent / budget.maximum) * 100;
 
@@ -28,10 +35,6 @@ const Budget = ({ budget }: BudgetProps) => {
     cyan: 'bg-cyan',
     navy: 'bg-navy',
   };
-
-  const filteredTransactions = transactions.filter(
-    (transaction) => transaction.category === budget.category
-  );
 
   return (
     <div className='bg-white rounded-[12px] px-5 py-6 flex flex-col items-start gap-5 md:p-8'>
