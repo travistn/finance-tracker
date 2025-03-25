@@ -26,18 +26,52 @@ interface BudgetFormProps {
   action: string;
 }
 
+const getColor = (color: string) => {
+  return (
+    <div className='flex items-center gap-3'>
+      <div className={`w-[16px] h-[16px] rounded-full ${themes[color as keyof ThemeType]}`} />
+      <p>{color}</p>
+    </div>
+  );
+};
+
 const BudgetForm = ({ action }: BudgetFormProps) => {
   const [category, setCategory] = useState('Bills');
-  const [colorTag, setColorTag] = useState('green');
+  const [theme, setTheme] = useState('green');
+  const [error, setError] = useState('');
 
-  const getColor = (color: string) => {
-    const theme = themes[color as keyof ThemeType];
-    return (
-      <div className='flex items-center gap-3'>
-        <div className={`w-[16px] h-[16px] rounded-full ${theme}`} />
-        <p>{color}</p>
-      </div>
-    );
+  const [budgetFormData, setBudgetFormData] = useState({
+    budgetMaximum: '',
+    category,
+    theme,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value === '' || /^[0-9]+$/.test(value)) {
+      setBudgetFormData((prevData) => ({
+        ...prevData,
+        budgetMaximum: e.target.value,
+      }));
+
+      setError('');
+    } else {
+      setError('Only numbers are allowed');
+    }
+  };
+
+  const createBudget = async () => {
+    try {
+      await fetch('/api/budget', {
+        method: 'POST',
+        body: JSON.stringify({
+          budgetFormData,
+        }),
+      });
+    } catch (error) {
+      console.error;
+    }
   };
 
   return (
@@ -52,7 +86,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           }`}</DialogTitle>
           <DialogClose asChild>
             <img
-              src={'/assets/images/icon-close-modal.svg'}
+              src='/assets/images/icon-close-modal.svg'
               className='hover:cursor-pointer hover:opacity-80'
             />
           </DialogClose>
@@ -71,21 +105,28 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
               onClick={(e) => setCategory(e.target.id)}
             />
           </div>
-          <div className='flex flex-col gap-1'>
+          <div className='flex flex-col gap-1 relative'>
             <label className='text-preset-5-bold text-gray-500'>Maximum Spending</label>
             <input
-              placeholder='$   e.g. 2000'
-              className='border border-beige-500 rounded-[8px] px-5 py-3'
+              placeholder='$ 1000'
+              value={budgetFormData.budgetMaximum}
+              onChange={handleChange}
+              className={`border border-beige-500 rounded-[8px] px-5 py-3 ${
+                error ? 'outline-red' : ''
+              }`}
             />
+            {error && (
+              <p className='text-preset-5 text-gray-500 absolute -bottom-6 right-0'>{error}</p>
+            )}
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-preset-5-bold text-gray-500'>Color Tag</label>
             <DropdownMenu>
               <DropdownMenuTrigger
                 className={`flex items-center gap-4 px-5 py-3 rounded-[8px] border border-beige-500 text-preset-4 text-gray-900 select-none capitalize hover:cursor-pointer`}>
-                {getColor(colorTag)}
+                {getColor(theme)}
                 <img
-                  src={'/assets/images/icon-caret-down.svg'}
+                  src='/assets/images/icon-caret-down.svg'
                   alt='dropdown-arrow'
                   className='ml-auto'
                 />
@@ -94,12 +135,15 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
                 {colors.map((color, index) => (
                   <div key={index}>
                     <DropdownMenuItem
-                      onClick={(e: any) => setColorTag(e.target.id)}
+                      onClick={(e) => setTheme(e.currentTarget.id)}
                       id={color}
-                      className={`text-gray-900 capitalize hover:cursor-pointer ${
-                        color === colorTag ? 'text-preset-4-bold' : 'text-preset-4'
-                      }`}>
-                      {getColor(color)}
+                      className='text-gray-900 text-preset-4 capitalize hover:cursor-pointer'>
+                      {
+                        <div className='w-full flex items-center justify-between'>
+                          {getColor(color)}
+                          {color === theme ? <img src='/assets/images/icon-selected.svg' /> : ''}
+                        </div>
+                      }
                     </DropdownMenuItem>
                     <DropdownMenuSeparator
                       className={`${index + 1 === colors.length ? 'hidden' : ''}`}
@@ -111,7 +155,9 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button className='w-full'>{action === 'add' ? 'Add Budget' : 'Save Changes'}</Button>
+          <Button onClick={createBudget} className='w-full'>
+            {action === 'add' ? 'Add Budget' : 'Save Changes'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
