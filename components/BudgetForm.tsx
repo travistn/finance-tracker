@@ -36,15 +36,12 @@ const getColor = (color: string) => {
 };
 
 const BudgetForm = ({ action }: BudgetFormProps) => {
-  const [category, setCategory] = useState('Bills');
-  const [theme, setTheme] = useState('green');
-  const [error, setError] = useState('');
-
   const [budgetFormData, setBudgetFormData] = useState({
     budgetMaximum: '',
-    category,
-    theme,
+    category: 'Bills',
+    theme: 'green',
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -69,6 +66,10 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           budgetFormData,
         }),
       });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     } catch (error) {
       console.error;
     }
@@ -100,9 +101,14 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           <div className='flex flex-col gap-1'>
             <label className='text-preset-5-bold text-gray-500'>Budget Category</label>
             <Dropdown
-              dropdownTrigger={category}
+              dropdownTrigger={budgetFormData.category}
               dropdownMenuItems={dropdownCategories.slice(1)}
-              onClick={(e) => setCategory(e.target.id)}
+              onClick={(e) =>
+                setBudgetFormData((prevData) => ({
+                  ...prevData,
+                  category: e.target.id,
+                }))
+              }
             />
           </div>
           <div className='flex flex-col gap-1 relative'>
@@ -124,7 +130,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
             <DropdownMenu>
               <DropdownMenuTrigger
                 className={`flex items-center gap-4 px-5 py-3 rounded-[8px] border border-beige-500 text-preset-4 text-gray-900 select-none capitalize hover:cursor-pointer`}>
-                {getColor(theme)}
+                {getColor(budgetFormData.theme)}
                 <img
                   src='/assets/images/icon-caret-down.svg'
                   alt='dropdown-arrow'
@@ -135,13 +141,22 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
                 {colors.map((color, index) => (
                   <div key={index}>
                     <DropdownMenuItem
-                      onClick={(e) => setTheme(e.currentTarget.id)}
+                      onClick={(e) =>
+                        setBudgetFormData((prevData) => ({
+                          ...prevData,
+                          theme: e.currentTarget.id,
+                        }))
+                      }
                       id={color}
                       className='text-gray-900 text-preset-4 capitalize hover:cursor-pointer'>
                       {
                         <div className='w-full flex items-center justify-between'>
                           {getColor(color)}
-                          {color === theme ? <img src='/assets/images/icon-selected.svg' /> : ''}
+                          {color === budgetFormData.theme ? (
+                            <img src='/assets/images/icon-selected.svg' />
+                          ) : (
+                            ''
+                          )}
                         </div>
                       }
                     </DropdownMenuItem>
