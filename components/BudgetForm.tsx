@@ -21,6 +21,7 @@ import Dropdown from './Dropdown';
 import Button from './Button';
 import { dropdownCategories, colors, themes } from '../constants/data.json';
 import { ThemeType } from '@/types';
+import { useBudgetStore } from '@/store/useBudgetStore';
 
 interface BudgetFormProps {
   action: string;
@@ -37,11 +38,13 @@ const getColor = (color: string) => {
 
 const BudgetForm = ({ action }: BudgetFormProps) => {
   const [budgetFormData, setBudgetFormData] = useState({
-    budgetMaximum: '',
     category: 'Bills',
+    maximum: '',
     theme: 'green',
   });
   const [error, setError] = useState('');
+
+  const { createBudget } = useBudgetStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -49,29 +52,12 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
     if (value === '' || /^[0-9]+$/.test(value)) {
       setBudgetFormData((prevData) => ({
         ...prevData,
-        budgetMaximum: e.target.value,
+        maximum: e.target.value,
       }));
 
       setError('');
     } else {
       setError('Only numbers are allowed');
-    }
-  };
-
-  const createBudget = async () => {
-    try {
-      await fetch('/api/budget', {
-        method: 'POST',
-        body: JSON.stringify({
-          budgetFormData,
-        }),
-      });
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
-    } catch (error) {
-      console.error;
     }
   };
 
@@ -115,7 +101,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
             <label className='text-preset-5-bold text-gray-500'>Maximum Spending</label>
             <input
               placeholder='$ 1000'
-              value={budgetFormData.budgetMaximum}
+              value={budgetFormData.maximum}
               onChange={handleChange}
               className={`border border-beige-500 rounded-[8px] px-5 py-3 ${
                 error ? 'outline-red' : ''
@@ -170,7 +156,11 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={createBudget} className='w-full'>
+          <Button
+            onClick={() =>
+              createBudget({ ...budgetFormData, maximum: Number(budgetFormData.maximum) })
+            }
+            className='w-full'>
             {action === 'add' ? 'Add Budget' : 'Save Changes'}
           </Button>
         </DialogFooter>
