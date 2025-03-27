@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-import { BudgetType } from '@/types';
+import { BudgetType, ColorType } from '@/types';
 
 interface BudgetStore {
   budgets: BudgetType[];
+  colors: ColorType[];
   fetchBudgets: () => Promise<void>;
   createBudget: (newBudget: BudgetType) => Promise<void>;
 }
@@ -14,6 +15,19 @@ export const useBudgetStore = create<BudgetStore>()(
     (set) => ({
       budgets: [],
 
+      colors: [
+        { name: 'green', used: false },
+        { name: 'yellow', used: false },
+        { name: 'cyan', used: false },
+        { name: 'navy', used: false },
+        { name: 'red', used: false },
+        { name: 'purple', used: false },
+        { name: 'turquoise', used: false },
+        { name: 'orange', used: false },
+        { name: 'blue', used: false },
+        { name: 'magenta', used: false },
+      ],
+
       fetchBudgets: async () => {
         try {
           const response = await fetch('/api/budget', {
@@ -21,6 +35,14 @@ export const useBudgetStore = create<BudgetStore>()(
           });
           const data = await response.json();
           set({ budgets: data });
+
+          set((state) => {
+            const updatedColors = state.colors.map((color) => {
+              const isUsed = state.budgets.some((budget) => budget.theme === color.name);
+              return { ...color, used: isUsed };
+            });
+            return { colors: updatedColors };
+          });
         } catch (error) {
           console.error;
         }
