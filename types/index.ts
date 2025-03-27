@@ -25,3 +25,8 @@ export interface ThemeType {
   blue: string;
   magenta: string;
 }
+
+export interface ColorType {
+  name: string;
+  used: boolean;
+}
