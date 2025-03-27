@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,8 +19,8 @@ import {
 
 import Dropdown from './Dropdown';
 import Button from './Button';
-import { dropdownCategories, colors, themes } from '../constants/data.json';
-import { ThemeType } from '@/types';
+import { dropdownCategories, themes } from '../constants/data.json';
+import { ThemeType, ColorType } from '@/types';
 import { useBudgetStore } from '@/store/useBudgetStore';
 
 interface BudgetFormProps {
@@ -37,14 +37,14 @@ const getColor = (color: string) => {
 };
 
 const BudgetForm = ({ action }: BudgetFormProps) => {
+  const { createBudget, colors } = useBudgetStore();
+
   const [budgetFormData, setBudgetFormData] = useState({
     category: 'Bills',
     maximum: '',
-    theme: 'green',
+    theme: '',
   });
   const [error, setError] = useState('');
-
-  const { createBudget } = useBudgetStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -60,6 +60,15 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
       setError('Only numbers are allowed');
     }
   };
+
+  useEffect(() => {
+    const firstAvailableColor = colors.find((color) => !color.used)?.name || '';
+
+    setBudgetFormData((prevData) => ({
+      ...prevData,
+      theme: firstAvailableColor,
+    }));
+  }, [colors]);
 
   return (
     <Dialog>
@@ -124,21 +133,32 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent className='min-w-[var(--radix-popper-anchor-width)]'>
-                {colors.map((color, index) => (
+                {colors.map((color: ColorType, index) => (
                   <div key={index}>
                     <DropdownMenuItem
+                      disabled={color.used}
                       onClick={(e) =>
                         setBudgetFormData((prevData) => ({
                           ...prevData,
                           theme: e.currentTarget.id,
                         }))
                       }
-                      id={color}
+                      id={color.name}
                       className='text-gray-900 text-preset-4 capitalize hover:cursor-pointer'>
                       {
                         <div className='w-full flex items-center justify-between'>
-                          {getColor(color)}
-                          {color === budgetFormData.theme ? (
+                          <div className='flex items-center gap-3'>
+                            <div
+                              className={`w-[16px] h-[16px] rounded-full ${
+                                themes[color.name as keyof ThemeType]
+                              } ${color.used ? 'opacity-50' : ''}`}
+                            />
+                            <p>{color.name}</p>
+                          </div>
+                          {color.used && (
+                            <p className='text-preset-5 text-gray-500'>Already Used</p>
+                          )}
+                          {color.name === budgetFormData.theme ? (
                             <img src='/assets/images/icon-selected.svg' />
                           ) : (
                             ''
