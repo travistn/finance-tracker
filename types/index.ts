@@ -8,6 +8,7 @@ export interface TransactionType {
 }
 
 export interface BudgetType {
+  _id?: string;
   category: string;
   maximum: number;
   theme: string;

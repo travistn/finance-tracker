@@ -8,6 +8,7 @@ interface BudgetStore {
   colors: ColorType[];
   fetchBudgets: () => Promise<void>;
   createBudget: (newBudget: BudgetType) => Promise<void>;
+  editBudget: (id: string, updatedBudget: Partial<BudgetType>) => Promise<void>;
 }
 
 export const useBudgetStore = create<BudgetStore>()(
@@ -58,6 +59,29 @@ export const useBudgetStore = create<BudgetStore>()(
           setTimeout(() => {
             window.location.reload();
           }, 300);
+        } catch (error) {
+          console.error;
+        }
+      },
+
+      editBudget: async (id, updatedBudget) => {
+        try {
+          const response = await fetch(`/api/budget/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ id, ...updatedBudget }),
+          });
+
+          if (response.ok) {
+            const updatedBudgets = await response.json();
+
+            set((state) => ({
+              budgets: state.budgets.map((b) => (b._id === id ? { ...b, ...updatedBudgets } : b)),
+            }));
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 300);
+          }
         } catch (error) {
           console.error;
         }
