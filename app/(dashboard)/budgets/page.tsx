@@ -17,7 +17,7 @@ const Budgets = () => {
     <div className='flex flex-col gap-8'>
       <div className='flex items-center justify-between'>
         <h1 className='text-preset-1 text-gray-900'>Budgets</h1>
-        <BudgetForm action='add' />
+        <BudgetForm action='add' title='+ Add New Budget' />
       </div>
       {budgets.map((budget, index) => (
         <Budget budget={budget} key={index} />

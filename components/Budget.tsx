@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { motion } from 'motion/react';
 
+import BudgetForm from './BudgetForm';
 import { BudgetType, ThemeType } from '@/types';
 import { useTransactionStore } from '@/store/useTransactionStore';
 import { themes } from '../constants/data.json';
@@ -11,6 +12,8 @@ interface BudgetProps {
 
 const Budget = ({ budget }: BudgetProps) => {
   const [seeAll, setSeeAll] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+
   const { transactions } = useTransactionStore();
 
   const filteredTransactions = transactions.filter(
@@ -25,7 +28,7 @@ const Budget = ({ budget }: BudgetProps) => {
 
   return (
     <div className='bg-white rounded-[12px] px-5 py-6 flex flex-col items-start gap-5 md:p-8'>
-      <div className='w-full flex justify-between items-center'>
+      <div className='w-full flex justify-between items-center relative'>
         <div className='flex items-center gap-4'>
           <div className={`w-4 h-4 rounded-full ${themes[budget.theme as keyof ThemeType]}`} />
           <h2 className='text-preset-2 text-gray-900'>{budget.category}</h2>
@@ -33,8 +36,18 @@ const Budget = ({ budget }: BudgetProps) => {
         <img
           src='/assets/images/icon-ellipsis.svg'
           alt='ellipsis-icon'
-          className='hover:cursor-pointer h-[5px]'
+          onClick={() => setOpenMenu(!openMenu)}
+          className='h-[5px] select-none hover:cursor-pointer'
         />
+        {openMenu && (
+          <div className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 absolute right-[-3] top-7 select-none'>
+            <BudgetForm action='edit' title='Edit Budget' budget={budget} />
+            <div className='border-b-1 border-gray-100 my-3' />
+            <p className='text-preset-4 text-red hover:cursor-pointer hover:opacity-85'>
+              Delete Budget
+            </p>
+          </div>
+        )}
       </div>
       <div className='flex flex-col gap-4 w-full'>
         <p className='text-preset-4 text-gray-500'>Maximum of ${budget.maximum} </p>
