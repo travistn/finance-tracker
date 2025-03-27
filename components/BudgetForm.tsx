@@ -20,11 +20,13 @@ import {
 import Dropdown from './Dropdown';
 import Button from './Button';
 import { dropdownCategories, themes } from '../constants/data.json';
-import { ThemeType, ColorType } from '@/types';
+import { ThemeType, ColorType, BudgetType } from '@/types';
 import { useBudgetStore } from '@/store/useBudgetStore';
 
 interface BudgetFormProps {
   action: string;
+  title: string;
+  budget?: BudgetType;
 }
 
 const getColor = (color: string) => {
@@ -36,15 +38,21 @@ const getColor = (color: string) => {
   );
 };
 
-const BudgetForm = ({ action }: BudgetFormProps) => {
-  const { createBudget, colors } = useBudgetStore();
+const BudgetForm = ({ action, title, budget }: BudgetFormProps) => {
+  const { colors, createBudget, editBudget } = useBudgetStore();
 
-  const [budgetFormData, setBudgetFormData] = useState({
-    category: 'Bills',
-    maximum: '',
-    theme: '',
+  const getInitialBudgetFormData = (action: string, budget?: BudgetType) => ({
+    category: action === 'edit' && budget ? budget?.category : 'Bills',
+    maximum: action === 'edit' && budget ? budget?.maximum : '',
+    theme: action === 'edit' && budget ? budget?.theme : '',
   });
+
+  const [budgetFormData, setBudgetFormData] = useState(() =>
+    getInitialBudgetFormData(action, budget)
+  );
   const [error, setError] = useState('');
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -61,19 +69,48 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
     }
   };
 
+  const handleSubmit = () => {
+    if (!budgetFormData.maximum) {
+      setError('Maximum spending is required');
+      return;
+    }
+
+    if (action === 'add') {
+      createBudget({ ...budgetFormData, maximum: Number(budgetFormData.maximum) });
+    }
+
+    if (action === 'edit') {
+      if (!budget || !budget._id) {
+        console.error('Budget data is missing or invalid.');
+        return;
+      }
+      editBudget(budget._id, {
+        category: budgetFormData.category,
+        maximum: Number(budgetFormData.maximum),
+        theme: budgetFormData.theme,
+      });
+    }
+  };
+
   useEffect(() => {
     const firstAvailableColor = colors.find((color) => !color.used)?.name || '';
 
     setBudgetFormData((prevData) => ({
       ...prevData,
-      theme: firstAvailableColor,
+      theme: !budget?.theme ? firstAvailableColor : budget.theme,
     }));
   }, [colors]);
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button>+ Add New Budget</Button>
+        {action === 'add' ? (
+          <Button>{title}</Button>
+        ) : (
+          <p className='text-preset-4 text-gray-900 hover:cursor-pointer hover:opacity-80'>
+            {title}
+          </p>
+        )}
       </DialogTrigger>
       <DialogContent className='flex flex-col gap-5 px-5 py-6 bg-white rounded-[12px] md:px-8'>
         <DialogHeader className='flex flex-row justify-between'>
@@ -113,7 +150,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
               value={budgetFormData.maximum}
               onChange={handleChange}
               className={`border border-beige-500 rounded-[8px] px-5 py-3 ${
-                error ? 'outline-red' : ''
+                error ? 'border-red outline-red' : ''
               }`}
             />
             {error && (
@@ -136,7 +173,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
                 {colors.map((color: ColorType, index) => (
                   <div key={index}>
                     <DropdownMenuItem
-                      disabled={color.used}
+                      disabled={color.used && color.name !== budget?.theme}
                       onClick={(e) =>
                         setBudgetFormData((prevData) => ({
                           ...prevData,
@@ -155,14 +192,16 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
                             />
                             <p>{color.name}</p>
                           </div>
-                          {color.used && (
-                            <p className='text-preset-5 text-gray-500'>Already Used</p>
-                          )}
-                          {color.name === budgetFormData.theme ? (
-                            <img src='/assets/images/icon-selected.svg' />
-                          ) : (
-                            ''
-                          )}
+                          <div className='flex items-center gap-3'>
+                            {color.used && (
+                              <p className='text-preset-5 text-gray-500'>
+                                {budget?.theme === color.name ? 'Currently in use' : 'Already used'}
+                              </p>
+                            )}
+                            {color.name === budgetFormData.theme && (
+                              <img src='/assets/images/icon-selected.svg' />
+                            )}
+                          </div>
                         </div>
                       }
                     </DropdownMenuItem>
@@ -176,11 +215,7 @@ const BudgetForm = ({ action }: BudgetFormProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            onClick={() =>
-              createBudget({ ...budgetFormData, maximum: Number(budgetFormData.maximum) })
-            }
-            className='w-full'>
+          <Button onClick={handleSubmit} className='w-full'>
             {action === 'add' ? 'Add Budget' : 'Save Changes'}
           </Button>
         </DialogFooter>
