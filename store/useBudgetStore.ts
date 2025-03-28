@@ -9,6 +9,7 @@ interface BudgetStore {
   fetchBudgets: () => Promise<void>;
   createBudget: (newBudget: BudgetType) => Promise<void>;
   editBudget: (id: string, updatedBudget: Partial<BudgetType>) => Promise<void>;
+  deleteBudget: (id: string) => Promise<void>;
 }
 
 export const useBudgetStore = create<BudgetStore>()(
@@ -76,6 +77,27 @@ export const useBudgetStore = create<BudgetStore>()(
 
             set((state) => ({
               budgets: state.budgets.map((b) => (b._id === id ? { ...b, ...updatedBudgets } : b)),
+            }));
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 300);
+          }
+        } catch (error) {
+          console.error;
+        }
+      },
+
+      deleteBudget: async (id) => {
+        try {
+          const response = await fetch(`/api/budget/${id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({ id }),
+          });
+
+          if (response.ok) {
+            set((state) => ({
+              budgets: state.budgets.filter((b) => b._id !== id),
             }));
 
             setTimeout(() => {

@@ -29,3 +29,22 @@ export const PUT = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Failed to edit a budget' }, { status: 400 });
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    await connectToDatabase();
+
+    const { id } = await req.json();
+
+    const deletedBudget = await Budget.findByIdAndDelete(id);
+
+    if (!deletedBudget) {
+      return NextResponse.json({ success: false, message: 'Budget not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error;
+    return NextResponse.json({ error: 'Failed to delete budget' }, { status: 400 });
+  }
+};
