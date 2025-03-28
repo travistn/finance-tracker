@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react';
 import { motion } from 'motion/react';
 
 import BudgetForm from './BudgetForm';
+import DeleteDialog from './DeleteDialog';
 import { BudgetType, ThemeType } from '@/types';
 import { useTransactionStore } from '@/store/useTransactionStore';
 import { themes } from '../constants/data.json';
@@ -43,9 +44,7 @@ const Budget = ({ budget }: BudgetProps) => {
           <div className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 absolute right-[-3] top-7 select-none'>
             <BudgetForm action='edit' title='Edit Budget' budget={budget} />
             <div className='border-b-1 border-gray-100 my-3' />
-            <p className='text-preset-4 text-red hover:cursor-pointer hover:opacity-85'>
-              Delete Budget
-            </p>
+            <DeleteDialog budget={budget} />
           </div>
         )}
       </div>
