@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import Budget from '@/components/Budget';
 import BudgetForm from '@/components/BudgetForm';
+import BudgetsChart from '@/components/BudgetsChart';
 import { useBudgetStore } from '@/store/useBudgetStore';
 
 const Budgets = () => {
@@ -19,9 +20,16 @@ const Budgets = () => {
         <h1 className='text-preset-1 text-gray-900'>Budgets</h1>
         <BudgetForm action='add' title='+ Add New Budget' />
       </div>
-      {budgets.map((budget, index) => (
-        <Budget budget={budget} key={index} />
-      ))}
+      <div className='max-xl:flex max-xl:flex-col gap-6 xl:grid xl:grid-cols-3'>
+        <div className='xl:auto-rows-min'>
+          <BudgetsChart budgets={budgets} />
+        </div>
+        <div className='flex flex-col gap-6 xl:col-start-2 xl:col-end-4'>
+          {budgets.map((budget, index) => (
+            <Budget budget={budget} key={index} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
