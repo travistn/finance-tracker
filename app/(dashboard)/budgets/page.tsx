@@ -21,9 +21,11 @@ const Budgets = () => {
         <BudgetForm action='add' title='+ Add New Budget' />
       </div>
       <div className='max-xl:flex max-xl:flex-col gap-6 xl:grid xl:grid-cols-3'>
-        <div className='xl:auto-rows-min'>
-          <BudgetsChart budgets={budgets} />
-        </div>
+        {budgets.length !== 0 && (
+          <div className='xl:auto-rows-min'>
+            <BudgetsChart budgets={budgets} />
+          </div>
+        )}
         <div className='flex flex-col gap-6 xl:col-start-2 xl:col-end-4'>
           {budgets.map((budget, index) => (
             <Budget budget={budget} key={index} />
