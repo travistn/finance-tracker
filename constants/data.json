@@ -465,5 +465,29 @@
     "Personal Care",
     "Shopping",
     "Transportation"
-  ]
+  ],
+  "colors": [
+    "green",
+    "yellow",
+    "cyan",
+    "navy",
+    "red",
+    "purple",
+    "turquoise",
+    "orange",
+    "blue",
+    "magenta"
+  ],
+  "themes": {
+    "green": "bg-green",
+    "yellow": "bg-yellow",
+    "cyan": "bg-cyan",
+    "navy": "bg-navy",
+    "red": "bg-red",
+    "purple": "bg-purple",
+    "turquoise": "bg-turquoise",
+    "orange": "bg-orange",
+    "blue": "bg-blue",
+    "magenta": "bg-magenta"
+  }
 }

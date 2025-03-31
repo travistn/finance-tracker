@@ -21,7 +21,7 @@ const Dropdown = ({ dropdownTrigger, dropdownMenuItems, className, onClick }: Dr
         {dropdownTrigger}
         <img src={'/assets/images/icon-caret-down.svg'} alt='dropdown-arrow' className='ml-auto' />
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className='min-w-[var(--radix-popper-anchor-width)]'>
         {dropdownMenuItems.map((item, index) => (
           <div key={index}>
             <DropdownMenuItem
