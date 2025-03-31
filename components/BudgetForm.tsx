@@ -52,8 +52,6 @@ const BudgetForm = ({ action, title, budget }: BudgetFormProps) => {
   );
   const [error, setError] = useState('');
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
@@ -102,7 +100,7 @@ const BudgetForm = ({ action, title, budget }: BudgetFormProps) => {
   }, [colors]);
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         {action === 'add' ? (
           <Button>{title}</Button>

@@ -1,5 +1,12 @@
 import { Fragment, useState } from 'react';
 import { motion } from 'motion/react';
+import { Dialog, DialogTrigger } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 import BudgetForm from './BudgetForm';
 import DeleteDialog from './DeleteDialog';
@@ -34,19 +41,27 @@ const Budget = ({ budget }: BudgetProps) => {
           <div className={`w-4 h-4 rounded-full ${themes[budget.theme as keyof ThemeType]}`} />
           <h2 className='text-preset-2 text-gray-900'>{budget.category}</h2>
         </div>
-        <img
-          src='/assets/images/icon-ellipsis.svg'
-          alt='ellipsis-icon'
-          onClick={() => setOpenMenu(!openMenu)}
-          className='h-[5px] select-none hover:cursor-pointer'
-        />
-        {openMenu && (
-          <div className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 absolute right-[-3] top-7 select-none'>
-            <BudgetForm action='edit' title='Edit Budget' budget={budget} />
-            <div className='border-b-1 border-gray-100 my-3' />
-            <DeleteDialog budget={budget} />
-          </div>
-        )}
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <img
+                src='/assets/images/icon-ellipsis.svg'
+                alt='ellipsis-icon'
+                onClick={() => setOpenMenu(!openMenu)}
+                className='h-[5px] select-none hover:cursor-pointer'
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 select-none absolute right-[-11] top-2 min-w-[135px]'>
+              <DialogTrigger asChild>
+                <BudgetForm action='edit' title='Edit Budget' budget={budget} />
+              </DialogTrigger>
+              <DropdownMenuSeparator className='my-3' />
+              <DialogTrigger asChild>
+                <DeleteDialog budget={budget} />
+              </DialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       </div>
       <div className='flex flex-col gap-4 w-full'>
         <p className='text-preset-4 text-gray-500'>Maximum of ${budget.maximum} </p>
