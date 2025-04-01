@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
 const potSchema = new mongoose.Schema({
+  amount: {
+    type: Number,
+  },
   name: {
     type: String,
   },

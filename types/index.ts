@@ -20,6 +20,7 @@ export interface PotType {
   target: number;
   theme: string;
   userId: string;
+  amount?: number;
 }
 
 export interface ThemeType {

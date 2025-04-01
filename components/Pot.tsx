@@ -17,8 +17,7 @@ interface PotProps {
 }
 
 const Pot = ({ pot }: PotProps) => {
-  const potAmount = 159;
-  const percentageSaved = potAmount / pot.target;
+  const percentageSaved = pot.amount! / pot.target;
 
   return (
     <div className='bg-white flex flex-col gap-8 px-5 py-6 rounded-[12px] md:px-6'>
@@ -52,7 +51,7 @@ const Pot = ({ pot }: PotProps) => {
         <span className='flex items-center justify-between'>
           <p className='text-preset-4 text-gray-500'>Total Saved</p>
           <p className='text-preset-1 text-gray-900'>
-            {potAmount.toLocaleString('en-US', {
+            {pot.amount!.toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
             })}

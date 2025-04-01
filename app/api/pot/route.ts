@@ -27,7 +27,7 @@ export const POST = async (req: Request) => {
 
     const { name, target, theme, userId } = body.pot;
 
-    const newPot = new Pot({ name, target, theme, userId });
+    const newPot = new Pot({ name, target, theme, userId, amount: 0 });
 
     await newPot.save();
     return NextResponse.json(newPot, { status: 201 });
