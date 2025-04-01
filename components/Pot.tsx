@@ -10,6 +10,7 @@ import Button from './Button';
 import { PotType, ThemeType } from '@/types';
 import { themes } from '../constants/data.json';
 import PotForm from './PotForm';
+import DeleteDialog from './DeleteDialog';
 
 interface PotProps {
   pot: PotType;
@@ -35,13 +36,14 @@ const Pot = ({ pot }: PotProps) => {
                 className='h-[5px] select-none hover:cursor-pointer'
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 select-none absolute right-[-11] top-2 min-w-[135px]'>
+            <DropdownMenuContent className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 select-none absolute right-[-11] top-2 min-w-[130px]'>
               <DialogTrigger asChild>
                 <PotForm action='edit' title='Edit Pot' pot={pot} />
               </DialogTrigger>
-              <DropdownMenuSeparator className='my-3'>
-                <DialogTrigger asChild>Delete</DialogTrigger>
-              </DropdownMenuSeparator>
+              <DropdownMenuSeparator className='my-3' />
+              <DialogTrigger asChild>
+                <DeleteDialog pot={pot} />
+              </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
         </Dialog>

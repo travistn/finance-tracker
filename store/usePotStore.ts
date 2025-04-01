@@ -9,6 +9,7 @@ interface PotStore {
   fetchPots: () => Promise<void>;
   createPot: (newPot: PotType) => Promise<void>;
   editPot: (id: string, updatedPot: Partial<PotType>) => Promise<void>;
+  deletePot: (id: string) => Promise<void>;
 }
 
 export const usePotStore = create<PotStore>()(
@@ -76,6 +77,27 @@ export const usePotStore = create<PotStore>()(
 
             set((state) => ({
               pots: state.pots.map((b) => (b._id === id ? { ...b, ...updatedPot } : b)),
+            }));
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 300);
+          }
+        } catch (error) {
+          console.error;
+        }
+      },
+
+      deletePot: async (id) => {
+        try {
+          const response = await fetch(`/api/pot/${id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({ id }),
+          });
+
+          if (response.ok) {
+            set((state) => ({
+              pots: state.pots.filter((b) => b._id !== id),
             }));
 
             setTimeout(() => {
