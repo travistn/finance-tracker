@@ -5,10 +5,16 @@ import { useSession } from 'next-auth/react';
 
 import Pot from '@/components/Pot';
 import PotForm from '@/components/PotForm';
+import { usePotStore } from '@/store/usePotStore';
 
 const Pots = () => {
   const { data: session, status } = useSession();
   const [userId, setUserId] = useState<string>('');
+  const { pots, fetchPots } = usePotStore();
+
+  useEffect(() => {
+    fetchPots();
+  }, []);
 
   useEffect(() => {
     if (status === 'authenticated' && session.user.id) {
@@ -22,7 +28,9 @@ const Pots = () => {
         <h1 className='text-preset-1 text-gray-900'>Pots</h1>
         <PotForm action='add' title='+ Add New Pot' userId={userId} />
       </div>
-      <Pot />
+      {pots?.map((pot) => (
+        <Pot key={pot._id} pot={pot} />
+      ))}
     </div>
   );
 };

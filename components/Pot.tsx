@@ -1,16 +1,21 @@
 import Button from './Button';
+import { PotType, ThemeType } from '@/types';
+import { themes } from '../constants/data.json';
 
-const Pot = () => {
-  const targetAmount = 2000;
+interface PotProps {
+  pot: PotType;
+}
+
+const Pot = ({ pot }: PotProps) => {
   const potAmount = 159;
-  const percentageSaved = potAmount / targetAmount;
+  const percentageSaved = potAmount / pot.target;
 
   return (
     <div className='bg-white flex flex-col gap-8 px-5 py-6 rounded-[12px] md:px-6'>
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
-          <div className='bg-green w-4 h-4 rounded-full' />
-          <h2 className='text-preset-2 text-gray-900'>Savings</h2>
+          <div className={`w-4 h-4 rounded-full ${themes[pot.theme as keyof ThemeType]}`} />
+          <h2 className='text-preset-2 text-gray-900'>{pot.name}</h2>
         </div>
         <img
           src='/assets/images/icon-ellipsis.svg'
@@ -31,8 +36,8 @@ const Pot = () => {
         <div className='flex flex-col gap-[13px]'>
           <div className='h-2 bg-beige-100 rounded-[4px]'>
             <div
-              style={{ width: `${percentageSaved >= 100 ? 100 : percentageSaved * 100}%` }}
-              className='h-2 rounded-[4px] bg-green'
+              style={{ width: `${Math.min(percentageSaved, 1) * 100}%` }}
+              className={`h-2 rounded-[4px] ${themes[pot.theme as keyof ThemeType]}`}
             />
           </div>
           <div className='flex items-center justify-between'>
@@ -44,7 +49,7 @@ const Pot = () => {
               })}
             </p>
             <p className='text-preset-5 text-gray-500'>
-              {targetAmount.toLocaleString('en-US', {
+              {pot.target.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 0,

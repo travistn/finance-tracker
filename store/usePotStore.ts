@@ -5,6 +5,7 @@ import { PotType } from '@/types';
 
 interface PotStore {
   pots: PotType[];
+  fetchPots: () => Promise<void>;
   createPot: (newPot: PotType) => Promise<void>;
 }
 
@@ -12,6 +13,18 @@ export const usePotStore = create<PotStore>()(
   persist(
     (set) => ({
       pots: [],
+
+      fetchPots: async () => {
+        try {
+          const response = await fetch('/api/pot', {
+            method: 'GET',
+          });
+          const data = await response.json();
+          set({ pots: data });
+        } catch (error) {
+          console.error(error);
+        }
+      },
 
       createPot: async (pot) => {
         try {
