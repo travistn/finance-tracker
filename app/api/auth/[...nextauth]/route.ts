@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { compare } from 'bcryptjs';
@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto';
 import connectToDatabase from '@/lib/mongoose';
 import User from '@/models/User';
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   session: { strategy: 'jwt' },
   providers: [
     GoogleProvider({
@@ -75,10 +75,15 @@ const handler = NextAuth({
       }
       return session;
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
     async signIn({ profile }) {
       try {
         await connectToDatabase();
-
         if (profile) {
           const existingUser = await User.findOne({ email: profile.email });
 
@@ -97,6 +102,7 @@ const handler = NextAuth({
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
