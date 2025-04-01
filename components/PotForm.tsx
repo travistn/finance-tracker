@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -22,10 +22,12 @@ import {
 import Button from './Button';
 import { themes, colors } from '../constants/data.json';
 import { ThemeType } from '@/types';
+import { usePotStore } from '@/store/usePotStore';
 
 interface PotFormProps {
   action: string;
   title: string;
+  userId: string | undefined;
 }
 
 const getColor = (color: string) => {
@@ -37,7 +39,9 @@ const getColor = (color: string) => {
   );
 };
 
-const PotForm = ({ action, title }: PotFormProps) => {
+const PotForm = ({ action, title, userId }: PotFormProps) => {
+  const { createPot } = usePotStore();
+
   const [potFormData, setPotFormData] = useState({
     name: '',
     target: '',
@@ -76,6 +80,18 @@ const PotForm = ({ action, title }: PotFormProps) => {
 
     validateInputs(name, value);
   };
+
+  const handleSubmit = () => {
+    if (action === 'add') {
+      createPot({ ...potFormData, target: Number(potFormData.target), userId: userId ?? '' });
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      setPotFormData((prev) => ({ ...prev, userId }));
+    }
+  }, [userId]);
 
   return (
     <Dialog>
@@ -176,7 +192,9 @@ const PotForm = ({ action, title }: PotFormProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button className='w-full'>{action === 'add' ? 'Add Pot' : 'Save Changes'}</Button>
+          <Button onClick={handleSubmit} className='w-full'>
+            {action === 'add' ? 'Add Pot' : 'Save Changes'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
