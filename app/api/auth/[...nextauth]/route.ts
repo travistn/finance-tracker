@@ -66,6 +66,15 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    async session({ session }) {
+      await connectToDatabase();
+      const user = await User.findOne({ email: session?.user?.email });
+
+      if (session.user) {
+        session.user.id = user._id as string;
+      }
+      return session;
+    },
     async signIn({ profile }) {
       try {
         await connectToDatabase();
@@ -87,7 +96,6 @@ const handler = NextAuth({
       }
     },
   },
-
   secret: process.env.NEXTAUTH_SECRET,
 });
 
