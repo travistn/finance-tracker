@@ -20,14 +20,15 @@ import {
 } from './ui/dropdown-menu';
 
 import Button from './Button';
-import { themes, colors } from '../constants/data.json';
-import { ThemeType } from '@/types';
+import { themes } from '../constants/data.json';
+import { PotType, ThemeType } from '@/types';
 import { usePotStore } from '@/store/usePotStore';
 
 interface PotFormProps {
   action: string;
   title: string;
-  userId: string | undefined;
+  userId?: string | undefined;
+  pot?: PotType;
 }
 
 const getColor = (color: string) => {
@@ -39,14 +40,16 @@ const getColor = (color: string) => {
   );
 };
 
-const PotForm = ({ action, title, userId }: PotFormProps) => {
-  const { createPot } = usePotStore();
+const PotForm = ({ action, title, userId, pot }: PotFormProps) => {
+  const { createPot, editPot, colors } = usePotStore();
 
-  const [potFormData, setPotFormData] = useState({
-    name: '',
-    target: '',
-    theme: 'green',
+  const getInitialPotFormData = (action: string, pot?: PotType) => ({
+    name: action === 'edit' && pot ? pot.name : '',
+    target: action === 'edit' && pot ? pot.target : '',
+    theme: action === 'edit' && pot ? pot.theme : '',
   });
+
+  const [potFormData, setPotFormData] = useState(() => getInitialPotFormData(action, pot));
 
   const [errors, setErrors] = useState({
     name: '',
@@ -85,6 +88,14 @@ const PotForm = ({ action, title, userId }: PotFormProps) => {
     if (action === 'add') {
       createPot({ ...potFormData, target: Number(potFormData.target), userId: userId ?? '' });
     }
+
+    if (action === 'edit') {
+      editPot(pot?._id!, {
+        name: potFormData.name,
+        target: Number(potFormData.target),
+        theme: potFormData.theme,
+      });
+    }
   };
 
   useEffect(() => {
@@ -93,10 +104,25 @@ const PotForm = ({ action, title, userId }: PotFormProps) => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const firstAvailableColor = colors.find((color) => !color.used)?.name || '';
+
+    setPotFormData((prevData) => ({
+      ...prevData,
+      theme: !pot?.theme ? firstAvailableColor : pot.theme,
+    }));
+  }, [colors]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>{title}</Button>
+        {action === 'add' ? (
+          <Button>{title}</Button>
+        ) : (
+          <p className='text-preset-4 text-gray-900 hover:cursor-pointer hover:opacity-80'>
+            {title}
+          </p>
+        )}
       </DialogTrigger>
       <DialogContent className='bg-white flex flex-col gap-5 px-5 py-6 rounded-[12px] md:p-8'>
         <DialogHeader className='flex flex-row justify-between'>
@@ -165,7 +191,8 @@ const PotForm = ({ action, title, userId }: PotFormProps) => {
                 {colors.map((color, index) => (
                   <div key={index}>
                     <DropdownMenuItem
-                      id={color}
+                      id={color.name}
+                      disabled={color.used && color.name !== pot?.theme}
                       onClick={(e) =>
                         setPotFormData((prevData) => ({
                           ...prevData,
@@ -173,12 +200,24 @@ const PotForm = ({ action, title, userId }: PotFormProps) => {
                         }))
                       }
                       className='text-gray-900 text-preset-4 capitalize hover:cursor-pointer'>
-                      <div className='w-full flex items-center'>
+                      <div className='w-full flex items-center justify-between'>
                         <div className='flex items-center gap-3'>
                           <div
-                            className={`w-4 h-4 rounded-full ${themes[color as keyof ThemeType]}`}
+                            className={`w-4 h-4 rounded-full ${
+                              themes[color.name as keyof ThemeType]
+                            } ${color.used ? 'opacity-50' : ''}`}
                           />
-                          <p>{color}</p>
+                          <p>{color.name}</p>
+                        </div>
+                        <div className='flex items-center gap-3'>
+                          {color.used && (
+                            <p className='text-preset-5 text-gray-500'>
+                              {pot?.theme === color.name ? 'Currently in use' : 'Already used'}
+                            </p>
+                          )}
+                          {color.name === potFormData.theme && (
+                            <img src='/assets/images/icon-selected.svg' />
+                          )}
                         </div>
                       </div>
                     </DropdownMenuItem>
