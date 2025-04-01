@@ -29,3 +29,22 @@ export const PUT = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Failed to edit a pot' }, { status: 400 });
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    await connectToDatabase();
+
+    const { id } = await req.json();
+
+    const deletedPot = await Pot.findByIdAndDelete(id);
+
+    if (!deletedPot) {
+      return NextResponse.json({ success: false, message: 'Pot not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error;
+    return NextResponse.json({ error: 'Failed to delete pot' }, { status: 400 });
+  }
+};
