@@ -28,9 +28,11 @@ const Pots = () => {
         <h1 className='text-preset-1 text-gray-900'>Pots</h1>
         <PotForm action='add' title='+ Add New Pot' userId={userId} />
       </div>
-      {pots?.map((pot) => (
-        <Pot key={pot._id} pot={pot} />
-      ))}
+      <div className='flex flex-col gap-6 xl:grid grid-cols-2'>
+        {pots?.map((pot) => (
+          <Pot key={pot._id} pot={pot} />
+        ))}
+      </div>
     </div>
   );
 };
