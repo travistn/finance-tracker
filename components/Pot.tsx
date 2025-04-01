@@ -1,6 +1,15 @@
+import { Dialog, DialogTrigger } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+
 import Button from './Button';
 import { PotType, ThemeType } from '@/types';
 import { themes } from '../constants/data.json';
+import PotForm from './PotForm';
 
 interface PotProps {
   pot: PotType;
@@ -12,16 +21,30 @@ const Pot = ({ pot }: PotProps) => {
 
   return (
     <div className='bg-white flex flex-col gap-8 px-5 py-6 rounded-[12px] md:px-6'>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center relative'>
         <div className='flex items-center gap-4'>
           <div className={`w-4 h-4 rounded-full ${themes[pot.theme as keyof ThemeType]}`} />
           <h2 className='text-preset-2 text-gray-900'>{pot.name}</h2>
         </div>
-        <img
-          src='/assets/images/icon-ellipsis.svg'
-          alt='ellipsis-icon'
-          className='h-[5px] select-none hover:cursor-pointer'
-        />
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <img
+                src='/assets/images/icon-ellipsis.svg'
+                alt='ellipsis-icon'
+                className='h-[5px] select-none hover:cursor-pointer'
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='bg-white flex flex-col rounded-[8px] shadow-2xl px-5 py-3 select-none absolute right-[-11] top-2 min-w-[135px]'>
+              <DialogTrigger asChild>
+                <PotForm action='edit' title='Edit Pot' pot={pot} />
+              </DialogTrigger>
+              <DropdownMenuSeparator className='my-3'>
+                <DialogTrigger asChild>Delete</DialogTrigger>
+              </DropdownMenuSeparator>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       </div>
       <div className='flex flex-col gap-4'>
         <span className='flex items-center justify-between'>
