@@ -14,6 +14,15 @@ export interface BudgetType {
   theme: string;
 }
 
+export interface PotType {
+  _id?: string;
+  name: string;
+  target: number;
+  theme: string;
+  userId: string;
+  amount?: number;
+}
+
 export interface ThemeType {
   green: string;
   yellow: string;
