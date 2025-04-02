@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
+import { motion } from 'motion/react';
 
 import Button from './Button';
 import { PotType } from '@/types';
@@ -36,12 +37,6 @@ const PotTransactionDialog = ({ action, title, pot }: PotTransactionDialogProps)
     setAmount(
       action === 'add' ? (pot.amount ?? 0) + numValue : Math.max((pot.amount ?? 0) - numValue, 0)
     );
-  };
-
-  const handleSubmit = () => {
-    if (action === 'add') {
-      updatePotAmount(pot._id!, amount);
-    }
   };
 
   return (
@@ -85,7 +80,16 @@ const PotTransactionDialog = ({ action, title, pot }: PotTransactionDialogProps)
             </p>
           </div>
           <div className='flex flex-col gap-[13px]'>
-            <div className='bg-beige-100 h-2 rounded-[8px]'></div>
+            <div className='bg-beige-100 h-2 rounded-[8px]'>
+              <motion.div
+                initial={{ width: `${Math.min(percentageSaved, 1) * 100}%` }}
+                animate={{ width: `${Math.min(percentageSaved, 1) * 100}%` }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className={`h-2 rounded-[4px] ${pot.amount! < amount ? 'bg-green' : 'bg-black'} ${
+                  pot.amount! > amount ? 'bg-red' : ''
+                }`}
+              />
+            </div>
             <div className='flex items-center justify-between'>
               <p
                 className={`text-preset-5-bold ${pot.amount! < amount ? 'text-green' : ''} ${
@@ -120,7 +124,7 @@ const PotTransactionDialog = ({ action, title, pot }: PotTransactionDialogProps)
           />
         </div>
         <DialogFooter>
-          <Button onClick={handleSubmit} className='w-full'>
+          <Button onClick={() => updatePotAmount(pot._id!, amount)} className='w-full'>
             {action === 'add' ? 'Confirm Addition' : 'Confirm Withdrawal'}
           </Button>
         </DialogFooter>
