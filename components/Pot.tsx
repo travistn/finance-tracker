@@ -11,6 +11,7 @@ import { PotType, ThemeType } from '@/types';
 import { themes } from '../constants/data.json';
 import PotForm from './PotForm';
 import DeleteDialog from './DeleteDialog';
+import PotTransactionDialog from './PotTransactionDialog';
 
 interface PotProps {
   pot: PotType;
@@ -83,12 +84,8 @@ const Pot = ({ pot }: PotProps) => {
           </div>
         </div>
         <div className='flex justify-between gap-4'>
-          <Button variant='secondary' className='flex-1'>
-            + Add Money
-          </Button>
-          <Button variant='secondary' className='flex-1'>
-            Withdraw
-          </Button>
+          <PotTransactionDialog action='add' title='+ Add Money' pot={pot} />
+          <PotTransactionDialog action='withdraw' title='Withdraw' pot={pot} />
         </div>
       </div>
     </div>

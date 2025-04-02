@@ -7,7 +7,7 @@ export const PUT = async (req: NextRequest) => {
   try {
     await connectToDatabase();
 
-    const { id, name, target, theme } = await req.json();
+    const { id, name, target, theme, amount } = await req.json();
 
     const updatedPot = await Pot.findByIdAndUpdate(
       id,
@@ -15,6 +15,7 @@ export const PUT = async (req: NextRequest) => {
         name,
         target,
         theme,
+        amount,
       },
       { new: true, runValidators: true }
     );

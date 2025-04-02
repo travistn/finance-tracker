@@ -10,11 +10,12 @@ interface PotStore {
   createPot: (newPot: PotType) => Promise<void>;
   editPot: (id: string, updatedPot: Partial<PotType>) => Promise<void>;
   deletePot: (id: string) => Promise<void>;
+  updatePotAmount: (id: string, amount: number) => Promise<void>;
 }
 
 export const usePotStore = create<PotStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       pots: [],
 
       colors: [
@@ -84,7 +85,7 @@ export const usePotStore = create<PotStore>()(
             }, 300);
           }
         } catch (error) {
-          console.error;
+          console.error(error);
         }
       },
 
@@ -105,7 +106,28 @@ export const usePotStore = create<PotStore>()(
             }, 300);
           }
         } catch (error) {
-          console.error;
+          console.error(error);
+        }
+      },
+
+      updatePotAmount: async (id, amount) => {
+        try {
+          const response = await fetch(`/api/pot/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ id, amount }),
+          });
+
+          if (response.ok) {
+            set((state) => ({
+              pots: state.pots.map((p) => (p._id === id ? { ...p, amount } : p)),
+            }));
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 300);
+          }
+        } catch (error) {
+          console.error(error);
         }
       },
     }),
