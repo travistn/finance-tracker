@@ -19,6 +19,11 @@ const RecurringBills = () => {
       (transaction, index, self) => self.findIndex((t) => t.name === transaction.name) === index
     );
 
+  const totalBills = recurringTransactions.reduce(
+    (sum, transaction) => sum + Math.abs(transaction?.amount),
+    0
+  );
+
   return (
     <div className='flex flex-col gap-8'>
       <h1 className='text-preset-1 text-gray-900'>Recurring Bills</h1>
@@ -28,10 +33,10 @@ const RecurringBills = () => {
             <img src='/assets/images/icon-recurring-bills.svg' className='md:w-[32px]' />
             <div className='flex flex-col gap-3 text-white'>
               <h2 className='text-preset-4'>Total bills</h2>
-              <p className='text-preset-1'>$384.98</p>
+              <p className='text-preset-1'>${totalBills}</p>
             </div>
           </div>
-          <RecurringBillsSummary />
+          <RecurringBillsSummary transactions={recurringTransactions} />
         </div>
         <div className='flex flex-col gap-6 bg-white rounded-[12px] px-5 py-6 md:p-8 xl:col-start-2 xl:col-end-4'>
           <div className='flex flex-col'>
