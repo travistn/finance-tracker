@@ -1,16 +1,26 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 
 import { usePotStore } from '@/store/usePotStore';
 import { useTransactionStore } from '@/store/useTransactionStore';
+import { useBudgetStore } from '@/store/useBudgetStore';
 import { themes } from '../../../constants/data.json';
 import { ThemeType } from '@/types';
 import Transaction from '@/components/Transaction';
+import BudgetsChart from '@/components/BudgetsChart';
 
 const Overview = () => {
-  const { pots } = usePotStore();
-  const { transactions } = useTransactionStore();
+  const { pots, fetchPots } = usePotStore();
+  const { transactions, fetchTransactions } = useTransactionStore();
+  const { budgets, fetchBudgets } = useBudgetStore();
+
+  useEffect(() => {
+    fetchPots();
+    fetchTransactions();
+    fetchBudgets();
+  }, []);
 
   return (
     <div className='flex flex-col gap-8'>
@@ -94,6 +104,18 @@ const Overview = () => {
             <Transaction transaction={transaction} key={index} />
           ))}
         </div>
+      </div>
+      <div className='flex flex-col gap-5 px-5 py-6 bg-white rounded-[12px] md:p-8'>
+        <div className='flex justify-between'>
+          <h2 className='text-preset-2 text-gray-900'>Budgets</h2>
+          <Link
+            href={'/budgets'}
+            className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+            <p className='text-preset-4 text-gray-500'>See Details</p>
+            <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+          </Link>
+        </div>
+        {budgets.length > 0 && <BudgetsChart budgets={budgets} />}
       </div>
     </div>
   );
