@@ -20,7 +20,7 @@ const RecurringTransaction = ({ transaction }: RecurringTransactionProps) => {
       <div className='flex items-center justify-between md:col-start-5'>
         <span className='flex items-center gap-2'>
           <p className='text-preset-5 text-green'>{`Monthly - ${format(
-            getDate(transaction.date),
+            transaction?.date,
             'do'
           )}`}</p>
           <img src='/assets/images/icon-bill-paid.svg' />
