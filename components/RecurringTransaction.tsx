@@ -1,4 +1,4 @@
-import { getDate, format } from 'date-fns';
+import { getDate, format, parseISO } from 'date-fns';
 
 import { TransactionType } from '@/types';
 
@@ -7,6 +7,14 @@ interface RecurringTransactionProps {
 }
 
 const RecurringTransaction = ({ transaction }: RecurringTransactionProps) => {
+  const dueDate = parseISO(transaction?.date);
+  const dueDay = getDate(dueDate);
+  const todayDay = getDate(new Date());
+
+  const daysUntilDue = dueDay - todayDay;
+
+  const isDueSoon = daysUntilDue <= 5 && daysUntilDue >= 0;
+
   return (
     <div className='flex flex-col max-md:gap-3 md:grid md:grid-cols-6'>
       <span className='flex items-center gap-4 md:col-start-1 md:col-end-4'>
@@ -19,10 +27,10 @@ const RecurringTransaction = ({ transaction }: RecurringTransactionProps) => {
       </span>
       <div className='flex items-center justify-between md:col-start-5'>
         <span className='flex items-center gap-2'>
-          <p className='text-preset-5 text-green'>{`Monthly - ${format(
-            transaction?.date,
-            'do'
-          )}`}</p>
+          <p
+            className={`text-preset-5 ${
+              isDueSoon ? 'text-red' : 'text-green'
+            }`}>{`Monthly - ${format(transaction?.date, 'do')}`}</p>
           <img src='/assets/images/icon-bill-paid.svg' />
         </span>
         <p className='text-preset-4-bold text-gray-900 md:hidden'>
