@@ -15,6 +15,11 @@ const RecurringTransaction = ({ transaction }: RecurringTransactionProps) => {
 
   const isDueSoon = daysUntilDue <= 5 && daysUntilDue >= 0;
 
+  const getDueIcon = () => {
+    if (daysUntilDue <= 5 && daysUntilDue >= 0) return '/assets/images/icon-bill-due.svg';
+    else if (daysUntilDue < 0) return '/assets/images/icon-bill-paid.svg';
+  };
+
   return (
     <div className='flex flex-col max-md:gap-3 md:grid md:grid-cols-6'>
       <span className='flex items-center gap-4 md:col-start-1 md:col-end-4'>
@@ -31,7 +36,7 @@ const RecurringTransaction = ({ transaction }: RecurringTransactionProps) => {
             className={`text-preset-5 ${
               isDueSoon ? 'text-red' : 'text-green'
             }`}>{`Monthly - ${format(transaction?.date, 'do')}`}</p>
-          <img src='/assets/images/icon-bill-paid.svg' />
+          <img src={getDueIcon()} />
         </span>
         <p className='text-preset-4-bold text-gray-900 md:hidden'>
           {transaction.amount
