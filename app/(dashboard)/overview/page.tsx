@@ -3,11 +3,14 @@
 import Link from 'next/link';
 
 import { usePotStore } from '@/store/usePotStore';
+import { useTransactionStore } from '@/store/useTransactionStore';
 import { themes } from '../../../constants/data.json';
 import { ThemeType } from '@/types';
+import Transaction from '@/components/Transaction';
 
 const Overview = () => {
   const { pots } = usePotStore();
+  const { transactions } = useTransactionStore();
 
   return (
     <div className='flex flex-col gap-8'>
@@ -74,6 +77,22 @@ const Overview = () => {
                 </div>
               ))}
           </div>
+        </div>
+      </div>
+      <div className='flex flex-col gap-8 px-5 py-6 bg-white rounded-[12px] md:p-8'>
+        <div className='flex justify-between'>
+          <h2 className='text-preset-2 text-gray-900'>Transactions</h2>
+          <Link
+            href={'/transactions'}
+            className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+            <p className='text-preset-4 text-gray-500'>View All</p>
+            <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+          </Link>
+        </div>
+        <div>
+          {transactions.slice(0, 5).map((transaction, index) => (
+            <Transaction transaction={transaction} key={index} />
+          ))}
         </div>
       </div>
     </div>
