@@ -5,7 +5,7 @@ import { TransactionType } from '@/types';
 
 interface TransactionStore {
   transactions: TransactionType[];
-  setTransactions: (transactions: TransactionType[]) => void;
+  fetchTransactions: () => Promise<void>;
 }
 
 export const useTransactionStore = create<TransactionStore>()(
@@ -13,7 +13,13 @@ export const useTransactionStore = create<TransactionStore>()(
     (set) => ({
       transactions: [],
 
-      setTransactions: (transactions) => set({ transactions }),
+      fetchTransactions: async () => {
+        const response = await fetch('/api/transaction', {
+          method: 'GET',
+        });
+        const data = await response.json();
+        set({ transactions: data });
+      },
     }),
     {
       name: 'transaction-storage',
