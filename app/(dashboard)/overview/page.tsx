@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePotStore } from '@/store/usePotStore';
 import { useTransactionStore } from '@/store/useTransactionStore';
 import { useBudgetStore } from '@/store/useBudgetStore';
+import { useRecurringBillsStore } from '@/store/useRecurringBillsStore';
 import { themes } from '../../../constants/data.json';
 import { ThemeType } from '@/types';
 import Transaction from '@/components/Transaction';
@@ -15,6 +16,7 @@ const Overview = () => {
   const { pots, fetchPots } = usePotStore();
   const { transactions, fetchTransactions } = useTransactionStore();
   const { budgets, fetchBudgets } = useBudgetStore();
+  const { recurringBills } = useRecurringBillsStore();
 
   useEffect(() => {
     fetchPots();
@@ -116,6 +118,46 @@ const Overview = () => {
           </Link>
         </div>
         {budgets.length > 0 && <BudgetsChart budgets={budgets} />}
+      </div>
+      <div className='flex flex-col gap-4 px-5 py-6 bg-white rounded-[12px] md:p-8'>
+        <div className='flex justify-between'>
+          <h2 className='text-preset-2 text-gray-900'>Recurring Bills</h2>
+          <Link
+            href={'/recurring-bills'}
+            className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+            <p className='text-preset-4 text-gray-500'>See Details</p>
+            <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+          </Link>
+        </div>
+        <div className='flex flex-col gap-3'>
+          <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-green'>
+            <p className='text-preset-4 text-gray-500'>Paid Bills</p>
+            <p className='text-preset-4-bold text-gray-900'>
+              {recurringBills.paid.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              })}
+            </p>
+          </div>
+          <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-yellow'>
+            <p className='text-preset-4 text-gray-500'>Total Upcoming</p>
+            <p className='text-preset-4-bold text-gray-900'>
+              {recurringBills.upcoming.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              })}
+            </p>
+          </div>
+          <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-red'>
+            <p className='text-preset-4 text-gray-500'>Due Soon</p>
+            <p className='text-preset-4-bold text-gray-900'>
+              {recurringBills.dueSoon.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              })}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
