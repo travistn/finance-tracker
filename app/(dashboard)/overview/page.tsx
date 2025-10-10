@@ -1,9 +1,166 @@
 'use client';
 
+import { useEffect } from 'react';
+import Link from 'next/link';
+
+import { usePotStore } from '@/store/usePotStore';
+import { useTransactionStore } from '@/store/useTransactionStore';
+import { useBudgetStore } from '@/store/useBudgetStore';
+import { useRecurringBillsStore } from '@/store/useRecurringBillsStore';
+import { themes } from '../../../constants/data.json';
+import { ThemeType } from '@/types';
+import Transaction from '@/components/Transaction';
+import BudgetsChart from '@/components/BudgetsChart';
+
 const Overview = () => {
+  const { pots, fetchPots } = usePotStore();
+  const { transactions, fetchTransactions } = useTransactionStore();
+  const { budgets, fetchBudgets } = useBudgetStore();
+  const { recurringBills } = useRecurringBillsStore();
+
+  useEffect(() => {
+    fetchPots();
+    fetchTransactions();
+    fetchBudgets();
+  }, []);
+
   return (
-    <div>
-      <h1>Overview</h1>
+    <div className='flex flex-col gap-8'>
+      <h1 className='text-preset-1 text-gray-900'>Overview</h1>
+      <div className='flex flex-col gap-3 md:flex-row md:gap-8 md:[&>*]:flex-1'>
+        <div className='flex flex-col gap-3 p-5 rounded-[12px] bg-gray-900'>
+          <h2 className='text-preset-4 text-white/90'>Current Balance</h2>
+          <p className='text-preset-1 text-white'>$4,836.00</p>
+        </div>
+        <div className='flex flex-col gap-3 p-5 rounded-[12px] bg-white'>
+          <h2 className='text-preset-4 text-gray-500'>Income</h2>
+          <p className='text-preset-1 text-gray-900'>$3,814.25</p>
+        </div>
+        <div className='flex flex-col gap-3 p-5 rounded-[12px] bg-white'>
+          <h2 className='text-preset-4 text-gray-500'>Expenses</h2>
+          <p className='text-preset-1 text-gray-900'>$1,700.50</p>
+        </div>
+      </div>
+      <div className='flex flex-col gap-8 xl:grid xl:grid-cols-5 xl:auto-rows-min xl:grid-rows-none'>
+        <div className='flex flex-col gap-5 px-5 py-6 rounded-[12px] bg-white md:p-8 xl:col-start-1 xl:col-end-4 xl:row-start-1 xl:row-end-2'>
+          <div className='flex flex-row items-center justify-between'>
+            <h2 className='text-preset-2 text-gray-900'>Pots</h2>
+            <Link
+              href={'/pots'}
+              className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+              <p className='text-preset-4 text-gray-500'>See Details</p>
+              <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+            </Link>
+          </div>
+          <div className='flex flex-col gap-5 md:flex-row'>
+            <div className='flex items-center gap-4 p-4 bg-beige-100 rounded-[12px] md:flex-5/12'>
+              <img src='/assets/images/icon-pot.svg' alt='pot-icon' />
+              <div className='flex flex-col gap-[11px]'>
+                <p className='text-preset-4 text-gray-500'>Total Saved</p>
+                <p className='text-preset-1 text-gray-900'>
+                  {pots
+                    .reduce((sum, pot) => sum + (pot?.amount ?? 0), 0)
+                    .toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })}
+                </p>
+              </div>
+            </div>
+            <div className='grid gap-4 grid-cols-2 md:flex-7/12'>
+              {pots.length > 0 &&
+                pots.map((pot, index) => (
+                  <div key={index} className='flex flex-row gap-4'>
+                    <div
+                      className={`w-[4px] h-full rounded-[8px] ${
+                        themes[pot.theme as keyof ThemeType]
+                      }`}
+                    />
+                    <div className='flex flex-col gap-1'>
+                      <p className='text-preset-5 text-gray-500'>{pot.name}</p>
+                      <p className='text-preset-4-bold text-gray-900'>
+                        {pot.amount?.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+        <div className='flex flex-col gap-8 px-5 py-6 bg-white rounded-[12px] md:p-8 xl:col-start-1 xl:col-end-4 xl:row-start-2 xl:row-end-4'>
+          <div className='flex justify-between'>
+            <h2 className='text-preset-2 text-gray-900'>Transactions</h2>
+            <Link
+              href={'/transactions'}
+              className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+              <p className='text-preset-4 text-gray-500'>View All</p>
+              <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+            </Link>
+          </div>
+          <div>
+            {transactions.slice(0, 10).map((transaction, index) => (
+              <Transaction transaction={transaction} key={index} />
+            ))}
+          </div>
+        </div>
+        <div className='flex flex-col gap-5 px-5 py-6 bg-white rounded-[12px] md:p-8 xl:col-start-4 xl:col-end-6 xl:row-start-1 xl:row-end-3'>
+          <div className='flex justify-between'>
+            <h2 className='text-preset-2 text-gray-900'>Budgets</h2>
+            <Link
+              href={'/budgets'}
+              className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+              <p className='text-preset-4 text-gray-500'>See Details</p>
+              <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+            </Link>
+          </div>
+          {budgets.length > 0 && <BudgetsChart budgets={budgets} />}
+        </div>
+        <div className='flex flex-col gap-4 px-5 py-6 bg-white rounded-[12px] md:p-8 xl:col-start-4 xl:col-end-6 xl:row-start-3 xl:row-end-4'>
+          <div className='flex justify-between'>
+            <h2 className='text-preset-2 text-gray-900'>Recurring Bills</h2>
+            <Link
+              href={'/recurring-bills'}
+              className='flex flex-row items-center gap-3 hover:cursor-pointer hover:opacity-70'>
+              <p className='text-preset-4 text-gray-500'>See Details</p>
+              <img src='/assets/images/icon-caret-right.svg' alt='right-arrow' />
+            </Link>
+          </div>
+          <div className='flex flex-col gap-3'>
+            <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-green'>
+              <p className='text-preset-4 text-gray-500'>Paid Bills</p>
+              <p className='text-preset-4-bold text-gray-900'>
+                {recurringBills.paid.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+              </p>
+            </div>
+            <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-yellow'>
+              <p className='text-preset-4 text-gray-500'>Total Upcoming</p>
+              <p className='text-preset-4-bold text-gray-900'>
+                {recurringBills.upcoming.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+              </p>
+            </div>
+            <div className='flex items-center justify-between px-4 py-5 bg-beige-100 rounded-r-[8px] border-l-4 border-red'>
+              <p className='text-preset-4 text-gray-500'>Due Soon</p>
+              <p className='text-preset-4-bold text-gray-900'>
+                {recurringBills.dueSoon.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
