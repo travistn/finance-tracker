@@ -1,12 +1,16 @@
+import { useEffect } from 'react';
 import { getDate, parseISO } from 'date-fns';
 
 import { TransactionType } from '@/types';
+import { useRecurringBillsStore } from '@/store/useRecurringBillsStore';
 
 interface RecurringBillsSummaryProps {
   transactions: TransactionType[];
 }
 
 const RecurringBillsSummary = ({ transactions }: RecurringBillsSummaryProps) => {
+  const { recurringBills, setRecurringBills } = useRecurringBillsStore();
+
   const getDaysUntilDue = (transaction: TransactionType) => {
     const dueDate = parseISO(transaction?.date);
     const dueDay = getDate(dueDate);
@@ -24,13 +28,20 @@ const RecurringBillsSummary = ({ transactions }: RecurringBillsSummaryProps) => 
   );
 
   const calculateBillsTotal = (bills: TransactionType[]) => {
-    return bills
-      .reduce((sum, transaction) => sum + Math.abs(transaction?.amount), 0)
-      .toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      });
+    return bills.reduce((sum, transaction) => sum + Math.abs(transaction?.amount), 0);
   };
+
+  const paid = calculateBillsTotal(paidBills);
+  const upcoming = calculateBillsTotal(upcomingBills);
+  const dueSoon = calculateBillsTotal(billsDueSoon);
+
+  useEffect(() => {
+    setRecurringBills({
+      paid,
+      upcoming,
+      dueSoon,
+    });
+  }, [paid, upcoming, dueSoon]);
 
   return (
     <div className='flex flex-col gap-5 bg-white p-5 rounded-[12px] max-xl:flex-1'>
@@ -41,7 +52,10 @@ const RecurringBillsSummary = ({ transactions }: RecurringBillsSummaryProps) => 
           {paidBills.length > 0 && (
             <p className='text-preset-5-bold text-gray-900'>{`${
               paidBills.length
-            } (${calculateBillsTotal(paidBills)})`}</p>
+            } (${recurringBills.paid.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })})`}</p>
           )}
         </span>
         <div className='border-b-1 border-gray-100 my-4' />
@@ -50,7 +64,10 @@ const RecurringBillsSummary = ({ transactions }: RecurringBillsSummaryProps) => 
           {upcomingBills.length > 0 && (
             <p className='text-preset-5-bold text-gray-900'>{`${
               upcomingBills.length
-            } (${calculateBillsTotal(upcomingBills)})`}</p>
+            } (${recurringBills.upcoming.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })})`}</p>
           )}
         </span>
         <div className='border-b-1 border-gray-100 my-4' />
@@ -59,7 +76,10 @@ const RecurringBillsSummary = ({ transactions }: RecurringBillsSummaryProps) => 
           {billsDueSoon.length > 0 && (
             <p className='text-preset-5-bold text-red'>{`${
               billsDueSoon.length
-            } (${calculateBillsTotal(billsDueSoon)})`}</p>
+            } (${recurringBills.dueSoon.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })})`}</p>
           )}
         </span>
       </div>
