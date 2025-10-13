@@ -10,6 +10,10 @@ const budgetSchema = new mongoose.Schema({
   theme: {
     type: String,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 });
 
 const Budget = mongoose.models.Budget || mongoose.model('Budget', budgetSchema);
