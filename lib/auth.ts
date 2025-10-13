@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions } from 'next-auth';
+import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { compare } from 'bcryptjs';
@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 
 import connectToDatabase from '@/lib/mongoose';
 import User from '@/models/User';
+import { seedUserData } from './seedUserData';
 
 export const authOptions: AuthOptions = {
   session: { strategy: 'jwt' },
@@ -32,11 +33,13 @@ export const authOptions: AuthOptions = {
         if (credentials?.email === 'guest') {
           const guestId = randomUUID();
 
-          await User.create({
+          const guestUser = await User.create({
             email: `guest_${guestId}`,
             username: 'Guest User',
             expireAt: new Date(Date.now() + 30 * 60 * 1000),
           });
+          await seedUserData(guestUser);
+
           return {
             id: guestId,
             email: `guest_${guestId}`,
