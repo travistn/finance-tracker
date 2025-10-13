@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 
 import connectToDatabase from '@/lib/mongoose';
 import Pot from '@/models/Pot';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export const GET = async () => {
   try {
