@@ -14,11 +14,12 @@ const userSchema = new mongoose.Schema(
     },
     expireAt: {
       type: Date,
-      expires: 0,
     },
   },
   { timestamps: true }
 );
+
+userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
