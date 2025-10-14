@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema(
     },
     expireAt: {
       type: Date,
-      expires: 0,
     },
   },
   { timestamps: true }

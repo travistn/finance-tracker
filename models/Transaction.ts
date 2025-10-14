@@ -19,6 +19,10 @@ const transactionSchema = new mongoose.Schema({
   recurring: {
     type: Boolean,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 });
 
 const Transaction = mongoose.models.Transaction || mongoose.model('Transaction', transactionSchema);
