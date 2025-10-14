@@ -6,9 +6,10 @@ import { cleanupExpiredGuests } from '@/lib/cleanupExpiredGuests';
 export const GET = async () => {
   try {
     await connectToDatabase();
-    const cleanup = await cleanupExpiredGuests();
-    return NextResponse.json(cleanup, { status: 200 });
+    await cleanupExpiredGuests();
+
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed' });
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
 };
