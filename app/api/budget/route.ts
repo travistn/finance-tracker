@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 import connectToDatabase from '@/lib/mongoose';
 import Budget from '@/models/Budget';
@@ -7,7 +9,10 @@ export const GET = async () => {
   try {
     await connectToDatabase();
 
-    const budgets = await Budget.find();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id.toString();
+
+    const budgets = await Budget.find({ userId });
     return NextResponse.json(budgets, { status: 200 });
   } catch (error) {
     console.error(error);
