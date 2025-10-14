@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +40,7 @@ const getColor = (color: string) => {
 };
 
 const BudgetForm = ({ action, title, budget }: BudgetFormProps) => {
+  const { data } = useSession();
   const { colors, createBudget, editBudget } = useBudgetStore();
 
   const getInitialBudgetFormData = (action: string, budget?: BudgetType) => ({
@@ -74,7 +76,11 @@ const BudgetForm = ({ action, title, budget }: BudgetFormProps) => {
     }
 
     if (action === 'add') {
-      createBudget({ ...budgetFormData, maximum: Number(budgetFormData.maximum) });
+      createBudget({
+        ...budgetFormData,
+        maximum: Number(budgetFormData.maximum),
+        userId: data!.user.id,
+      });
     }
 
     if (action === 'edit') {

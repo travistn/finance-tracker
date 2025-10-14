@@ -21,8 +21,8 @@ export const POST = async (req: Request) => {
 
     const body = await req.json();
 
-    const { category, maximum, theme } = body.budget;
-    const newBudget = new Budget({ category, maximum, theme });
+    const { category, maximum, theme, userId } = body.budget;
+    const newBudget = new Budget({ category, maximum, theme, userId });
 
     await newBudget.save();
     return NextResponse.json(newBudget, { status: 201 });
