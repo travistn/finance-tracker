@@ -16,12 +16,13 @@ const Overview = () => {
   const { pots, fetchPots } = usePotStore();
   const { transactions, fetchTransactions } = useTransactionStore();
   const { budgets, fetchBudgets } = useBudgetStore();
-  const { recurringBills } = useRecurringBillsStore();
+  const { recurringBills, fetchRecurringBills } = useRecurringBillsStore();
 
   useEffect(() => {
     fetchPots();
     fetchTransactions();
     fetchBudgets();
+    fetchRecurringBills();
   }, []);
 
   return (
