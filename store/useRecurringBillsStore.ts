@@ -9,6 +9,9 @@ interface RecurringBillsStore {
     paid: number;
     upcoming: number;
     dueSoon: number;
+    paidLength: number;
+    upcomingLength: number;
+    dueSoonLength: number;
   };
   recurringTransactions?: TransactionType[];
   fetchRecurringBills: () => Promise<void>;
@@ -35,6 +38,9 @@ export const useRecurringBillsStore = create<RecurringBillsStore>()(
         paid: 0,
         upcoming: 0,
         dueSoon: 0,
+        paidLength: 0,
+        upcomingLength: 0,
+        dueSoonLength: 0,
       },
 
       transactions: [],
@@ -75,6 +81,9 @@ export const useRecurringBillsStore = create<RecurringBillsStore>()(
             paid: calculateBillsTotal(paidBills),
             upcoming: calculateBillsTotal(upcomingBills),
             dueSoon: calculateBillsTotal(billsDueSoon),
+            paidLength: paidBills.length,
+            upcomingLength: upcomingBills.length,
+            dueSoonLength: billsDueSoon.length,
           },
         });
       },

@@ -1,25 +1,15 @@
 'use client';
 
-import { useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 
-import { useTransactionStore } from '@/store/useTransactionStore';
 import RecurringBillsSummary from '@/components/RecurringBillsSummary';
 import RecurringTransaction from '@/components/RecurringTransaction';
+import { useRecurringBillsStore } from '@/store/useRecurringBillsStore';
 
 const RecurringBills = () => {
-  const { transactions, fetchTransactions } = useTransactionStore();
+  const { recurringTransactions } = useRecurringBillsStore();
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
-
-  const recurringTransactions = transactions
-    .filter((transaction) => transaction.recurring)
-    .filter(
-      (transaction, index, self) => self.findIndex((t) => t.name === transaction.name) === index
-    );
-
-  const totalBills = recurringTransactions.reduce(
+  const totalBills = recurringTransactions?.reduce(
     (sum, transaction) => sum + Math.abs(transaction?.amount),
     0
   );
@@ -36,7 +26,7 @@ const RecurringBills = () => {
               <p className='text-preset-1'>${totalBills}</p>
             </div>
           </div>
-          <RecurringBillsSummary transactions={recurringTransactions} />
+          <RecurringBillsSummary />
         </div>
         <div className='flex flex-col gap-6 bg-white rounded-[12px] px-5 py-6 md:p-8 xl:col-start-2 xl:col-end-4'>
           <div className='flex flex-col'>
@@ -46,7 +36,7 @@ const RecurringBills = () => {
               <p className='text-preset-5 text-gray-500 text-right'>Amount</p>
             </div>
             <div className='border-b-1 border-gray-100 my-6 max-md:hidden' />
-            {recurringTransactions.map((transaction, index) => (
+            {recurringTransactions?.map((transaction, index) => (
               <Fragment key={index}>
                 <RecurringTransaction transaction={transaction} />
                 <div
