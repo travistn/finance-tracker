@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   Dialog,
   DialogClose,
@@ -27,7 +28,6 @@ import { usePotStore } from '@/store/usePotStore';
 interface PotFormProps {
   action: string;
   title: string;
-  userId?: string | undefined;
   pot?: PotType;
 }
 
@@ -40,7 +40,8 @@ const getColor = (color: string) => {
   );
 };
 
-const PotForm = ({ action, title, userId, pot }: PotFormProps) => {
+const PotForm = ({ action, title, pot }: PotFormProps) => {
+  const { data } = useSession();
   const { createPot, editPot, colors } = usePotStore();
 
   const getInitialPotFormData = (action: string, pot?: PotType) => ({
@@ -86,7 +87,7 @@ const PotForm = ({ action, title, userId, pot }: PotFormProps) => {
 
   const handleSubmit = () => {
     if (action === 'add') {
-      createPot({ ...potFormData, target: Number(potFormData.target), userId: userId ?? '' });
+      createPot({ ...potFormData, target: Number(potFormData.target), userId: data!.user.id });
     }
 
     if (action === 'edit') {
@@ -97,12 +98,6 @@ const PotForm = ({ action, title, userId, pot }: PotFormProps) => {
       });
     }
   };
-
-  useEffect(() => {
-    if (userId) {
-      setPotFormData((prev) => ({ ...prev, userId }));
-    }
-  }, [userId]);
 
   useEffect(() => {
     const firstAvailableColor = colors.find((color) => !color.used)?.name || '';
