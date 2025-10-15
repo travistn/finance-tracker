@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs';
 
 import connectToDatabase from '@/lib/mongoose';
 import User from '@/models/User';
+import { seedUserData } from '@/lib/seedUserData';
 
 export const POST = async (req: Request) => {
   try {
@@ -21,6 +22,8 @@ export const POST = async (req: Request) => {
     const hashedPassword = await hash(password, 12);
 
     const newUser = new User({ username, email, password: hashedPassword });
+
+    await seedUserData(newUser._id.toString());
 
     if (newUser) {
       await newUser.save();
