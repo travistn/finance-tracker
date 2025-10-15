@@ -88,13 +88,19 @@ export const authOptions: AuthOptions = {
       try {
         await connectToDatabase();
         if (profile) {
-          const existingUser = await User.findOne({ email: profile.email });
+          let existingUser = await User.findOne({ email: profile.email });
 
           if (!existingUser) {
-            await User.create({
+            const newUser = await User.create({
               email: profile.email,
               username: profile.name,
             });
+
+            if (!newUser || !newUser._id) {
+              throw new Error('Failed to create a new user before seeding');
+            }
+            await seedUserData(newUser._id.toString());
+            existingUser = newUser;
           }
         }
         return true;
